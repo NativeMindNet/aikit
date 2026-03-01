@@ -8,7 +8,7 @@ Parse the arguments to determine the action:
 
 ### `start [name]` - Start new DDD flow
 1. Create directory `flows/ddd-[name]/`
-2. Copy templates from `flows/.templates/`
+2. Copy templates from `flows/.templates/ddd/`
 3. Create `_status.md` with phase = REQUIREMENTS
 4. Begin requirements elicitation with user
 
