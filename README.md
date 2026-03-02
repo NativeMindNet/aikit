@@ -1,6 +1,6 @@
 # Document-Driven Development Template
 
-A comprehensive framework for managing software development through structured documentation. This template supports **SDD**, **DDD**, **TDD**, **VDD** workflows and **ADR** (Architecture Decision Records), enabling AI-assisted development with full traceability from requirements to implementation.
+A comprehensive framework for managing software development through structured documentation. This template supports **SDD**, **DDD**, **TDD**, **VDD** workflows, **ADR** (Architecture Decision Records), and orchestration tools (**roadmap**, **legacy**).
 
 ## Overview
 
@@ -10,7 +10,7 @@ This template treats documentation as the primary development artifact, where co
 - **Traceability**: Every implementation decision traces back to requirements
 - **Iteration**: Refine documents before committing to code
 - **Parallelization**: Multiple agents can work from the same documents
-- **Client Communication**: Clear, accessible documentation for stakeholders
+- **Stakeholder Communication**: Feature presentations for clients and executives
 - **Decision History**: ADRs capture architectural decisions with full rationale
 
 ## Auto-loaded Context
@@ -23,20 +23,46 @@ The `CLAUDE.md` file is automatically loaded at session start, providing:
 ## Supported Workflows
 
 ### SDD (Spec-Driven Development)
-Focus on specifications as the core artifact with 4 phases:
+Internal features, developer-focused. 4 phases:
 
 ```
 REQUIREMENTS → SPECIFICATIONS → PLAN → IMPLEMENTATION
 ```
 
+**Use when**: Internal logic, infrastructure, developer tooling.
+
 ### DDD (Document-Driven Development)
-Extended workflow with **stakeholder communication** phase - for features requiring client/executive buy-in:
+Features requiring **stakeholder buy-in**. 5 phases:
 
 ```
 REQUIREMENTS → SPECIFICATIONS → PLAN → IMPLEMENTATION → DOCUMENTATION
 ```
 
-**Key difference**: DDD adds a Documentation phase that creates a **mini-presentation** of the feature - not technical docs, but a compelling explanation of value for clients, executives, or end users.
+**Use when**: Client-facing features, need to "sell" the feature, documentation is deliverable.
+
+**Key difference**: Final phase creates a **mini-presentation** for clients/executives - not technical docs, but value explanation.
+
+### TDD (Tests-Driven Development)
+**Cases-first** approach for correctness-critical features. 6 phases:
+
+```
+REQUIREMENTS → TESTS → SPECIFICATIONS → PLAN → IMPLEMENTATION → DOCUMENTATION
+```
+
+**Use when**: Financial calculations, security logic, complex state machines.
+
+**Key difference**: TESTS phase is exhaustive behavioral analysis. Design **emerges from cases**, not invented independently. Specs are **derived from tests**.
+
+### VDD (Visual-Driven Development)
+UI/UX-primary features. 6 phases:
+
+```
+REQUIREMENTS → VISUAL → SPECIFICATIONS → PLAN → IMPLEMENTATION → DOCUMENTATION
+```
+
+**Use when**: User interfaces, visual design is primary concern.
+
+**Key difference**: VISUAL phase defines UI before technical specs.
 
 ## Quick Start
 
@@ -49,27 +75,21 @@ This template supports multiple AI-powered IDEs:
 
 ### 2. Start a New Flow
 
-#### For SDD:
 ```
-/sdd start [feature-name]
+/sdd start [feature-name]    # Internal feature
+/ddd start [feature-name]    # Client-facing feature
+/tdd start [feature-name]    # Correctness-critical
+/vdd start [feature-name]    # UI-primary
 ```
-
-#### For DDD:
-```
-/ddd start [feature-name]
-```
-
-This creates a new flow directory under `flows/` with all necessary templates.
 
 ### 3. Work Through Phases
 
 Each phase requires explicit approval before advancing:
-
-1. **Requirements**: Define what and why
-2. **Specifications**: Design how at architectural level
-3. **Plan**: Break down into actionable tasks
-4. **Implementation**: Execute and log progress
-5. **Documentation** (DDD only): Create client-facing README
+- "requirements approved"
+- "tests approved" (TDD) / "visual approved" (VDD)
+- "specs approved"
+- "plan approved"
+- "docs approved" (DDD/TDD/VDD)
 
 ## Project Structure
 
@@ -82,32 +102,29 @@ Each phase requires explicit approval before advancing:
 │   ├── tdd.md                    # TDD flow documentation
 │   ├── vdd.md                    # VDD flow documentation
 │   ├── adr.md                    # ADR flow documentation
-│   ├── adr-index.md            # Master index of all ADRs
+│   ├── adr-index.md              # Master index of all ADRs
 │   ├── .templates/               # Templates for new flows
-│   │   ├── sdd/                  # SDD templates
-│   │   ├── ddd/                  # DDD templates
-│   │   ├── tdd/                  # TDD templates
-│   │   ├── vdd/                  # VDD templates
-│   │   └── adr/                  # ADR templates
-│   │       ├── adr.md            # Full ADR template
-│   │       ├── lightweight.md    # Quick ADR template
-│   │       └── _status.md        # Status tracking
+│   │   ├── sdd/
+│   │   ├── ddd/
+│   │   ├── tdd/
+│   │   ├── vdd/
+│   │   └── adr/
 │   ├── sdd-[feature]/            # SDD flow instances
 │   ├── ddd-[feature]/            # DDD flow instances
 │   ├── tdd-[feature]/            # TDD flow instances
 │   ├── vdd-[feature]/            # VDD flow instances
 │   ├── adr-[NNN]-[name]/         # ADR instances (numbered)
 │   ├── roadmap/                  # Flow orchestration
-│   │   ├── _status.md            # Current state
-│   │   ├── dependencies.md       # Flow dependency graph
-│   │   ├── plan.md               # Master implementation plan
-│   │   └── log.md                # Execution history
+│   │   ├── _status.md
+│   │   ├── dependencies.md
+│   │   ├── plan.md
+│   │   └── log.md
 │   └── legacy/                   # Reverse engineering
-│       ├── _status.md            # Analysis progress
-│       ├── log.md                # Iteration history
-│       ├── analysis/             # Per-depth analysis
-│       ├── mapping.md            # Code → flow mapping
-│       └── review.md             # Items for review
+│       ├── _status.md
+│       ├── log.md
+│       ├── analysis/
+│       ├── mapping.md
+│       └── review.md
 │
 ├── .claude/commands/             # Claude Code commands
 ├── .cursor/prompts/commands/     # Cursor commands
@@ -121,62 +138,43 @@ Each phase requires explicit approval before advancing:
 
 | Command | Description |
 |---------|-------------|
-| `/sdd start [name]` | Start new SDD flow |
-| `/sdd resume [name]` | Resume existing SDD flow |
-| `/sdd fork [old] [new]` | Fork flow for context recovery |
-| `/sdd status` | Show all active SDD flows |
-| `/ddd start [name]` | Start new DDD flow |
-| `/ddd resume [name]` | Resume existing DDD flow |
-| `/ddd fork [old] [new]` | Fork DDD flow |
-| `/ddd status` | Show all active DDD flows |
-
-### Speckit Tools
-
-Advanced tools for specification management:
-
-| Command | Description |
-|---------|-------------|
-| `/speckit.specify` | Create or update feature specification |
-| `/speckit.plan` | Execute implementation planning workflow |
-| `/speckit.tasks` | Generate actionable task list |
-| `/speckit.implement` | Execute implementation plan |
-| `/speckit.checklist` | Generate custom checklist |
-| `/speckit.clarify` | Identify underspecified areas |
-| `/speckit.analyze` | Cross-artifact consistency analysis |
-| `/speckit.constitution` | Create/update project constitution |
-| `/speckit.taskstoissues` | Convert tasks to GitHub issues |
-| `/speckit.sdd` | SDD sync (Speckit ↔ SDD flows) |
-| `/speckit.ddd` | DDD sync (Speckit ↔ DDD flows) |
+| `/sdd start [name]` | Start new SDD flow (internal feature) |
+| `/ddd start [name]` | Start new DDD flow (client-facing) |
+| `/tdd start [name]` | Start new TDD flow (correctness-critical) |
+| `/vdd start [name]` | Start new VDD flow (UI-primary) |
+| `/[flow] resume [name]` | Resume existing flow |
+| `/[flow] status` | Show all active flows of type |
 
 ### Architecture Decision Records
 
 | Command | Description |
 |---------|-------------|
 | `/adr start [name]` | Start new ADR in DRAFT phase |
-| `/adr resume [n]` | Resume existing ADR by number or name |
+| `/adr resume [n]` | Resume existing ADR |
 | `/adr quick [name]` | Create lightweight ADR |
 | `/adr list` | Show all ADRs with status |
-| `/adr status` | Show active ADRs (DRAFT/REVIEW) |
 | `/adr.guide` | Reference: language patterns, scaling, migration |
 
-**ADR Flow Phases**: `DRAFT → REVIEW → APPROVED | REJECTED`
+**ADR Types**:
+- `constraining` - selects from options, narrows scope
+- `enabling` - adds capabilities, expands scope
 
-**ADR Types**: `constraining` (selects from options) | `enabling` (adds capabilities)
+**Flow**: `DRAFT → REVIEW → APPROVED | REJECTED`
 
 ### Roadmap - Flow Orchestration
 
 | Command | Description |
 |---------|-------------|
-| `/roadmap` | BFS: Document all flows, then implement (breadth-first) |
-| `/roadmap [flow]` | DFS: Complete specific flow + its blockers (depth-first) |
-| `/roadmap status` | Show current roadmap state |
+| `/roadmap` | BFS: Document all flows, then implement |
+| `/roadmap [flow]` | DFS: Complete specific flow + blockers |
+| `/roadmap status` | Show current state |
 
-**BFS Mode** (no args): Maximizes documentation before implementation
+**BFS Mode** (no args):
 - Documents all flows to PLAN approved
 - Builds master implementation plan
-- Executes by plan
+- Executes by consolidated plan
 
-**DFS Mode** (with flow): Shortest path to complete target
+**DFS Mode** (with flow):
 - Finds blocking dependencies recursively
 - Completes blockers depth-first
 - Completes target flow
@@ -185,216 +183,86 @@ Advanced tools for specification management:
 
 | Command | Description |
 |---------|-------------|
-| `/legacy` | BFS: Analyze entire project, generate docs |
-| `/legacy [path]` | BFS: Analyze specific path only |
-| `/legacy [path] "comment"` | DFS: Focus on specific functionality |
+| `/legacy` | Analyze entire project, generate docs |
+| `/legacy [path]` | Analyze specific path |
+| `/legacy [path] "focus"` | DFS: Focus on specific functionality |
 
-**Auto-detects flow types:**
-- TDD ← tests present
-- VDD ← UI components
-- DDD ← public API/docs
-- SDD ← internal logic
+**Module-first detection** - flows per module, not per file type.
 
-**Auto-detects ADRs:**
-- constraining ← choices made (frameworks, patterns)
-- enabling ← capabilities to support
+**Auto-detects flow type by purpose**:
+- SDD ← internal logic, no stakeholder communication needed
+- DDD ← requires client/executive explanation
+- TDD ← correctness-critical, tests define behavior
+- VDD ← UI/UX is primary concern
 
-All generated flows/ADRs are DRAFT status, require review.
+**Idempotent**: Appends to existing flows, no duplicates.
 
-## Workflow Phases Explained
+All generated flows are DRAFT status, require review.
 
-### Phase 1: Requirements
-**Goal**: Capture WHAT and WHY
+## Choosing the Right Flow
 
-- Problem statement
-- User stories (As a... I want... So that...)
-- Acceptance criteria (Given/When/Then)
-- Constraints and non-goals
-- Open questions
-
-**Output**: `01-requirements.md`
-
-### Phase 2: Specifications
-**Goal**: Design HOW at architectural level
-
-- Affected systems/components
-- Data models and interfaces
-- Behavior descriptions
-- Edge cases and error handling
-- Dependencies and integration points
-
-**Output**: `02-specifications.md`
-
-### Phase 3: Plan
-**Goal**: Break down into actionable steps
-
-- Task breakdown with dependencies
-- File changes (create/modify/delete)
-- Testing strategy
-- Rollback considerations
-- Complexity estimates
-
-**Output**: `03-plan.md`
-
-### Phase 4: Implementation
-**Goal**: Execute the plan
-
-- Track progress against plan
-- Document deviations and rationale
-- Capture learnings for spec refinement
-
-**Output**: Working code + `04-implementation-log.md`
-
-### Phase 5: Documentation (DDD only)
-**Goal**: Create client-facing documentation
-
-- Feature functionality in plain language
-- Simple, non-technical explanation
-- Usage examples
-- Benefits for end users
-- Avoid technical jargon
-
-**Output**: `README.md`
+| Situation | Flow |
+|-----------|------|
+| Internal refactoring | SDD |
+| Developer tooling | SDD |
+| Infrastructure | SDD |
+| Client-facing feature | DDD |
+| Feature needs "selling" to stakeholders | DDD |
+| Documentation is deliverable | DDD |
+| Financial/security calculations | TDD |
+| Complex state machines | TDD |
+| Behavior must be exhaustively defined | TDD |
+| UI/UX is the primary concern | VDD |
+| Visual design drives development | VDD |
 
 ## Phase Transitions
 
-Each phase requires explicit user approval before advancing:
+Each phase requires explicit user approval:
 
-- **Requirements → Specifications**: "requirements approved"
-- **Specifications → Plan**: "specs approved"
-- **Plan → Implementation**: "plan approved"
-- **Implementation → Documentation**: "ready for docs" (DDD only)
-- **Documentation → Complete**: "docs approved" (DDD only)
+| Transition | Approval phrase |
+|------------|-----------------|
+| Requirements → next | "requirements approved" |
+| Tests → Specs (TDD) | "tests approved" |
+| Visual → Specs (VDD) | "visual approved" |
+| Specs → Plan | "specs approved" |
+| Plan → Implementation | "plan approved" |
+| Implementation → Docs | "ready for docs" |
+| Docs → Complete | "docs approved" |
 
 ## Status Tracking
 
-Each flow maintains a `_status.md` file tracking:
-
-- Current phase
-- Phase status (drafting, review, approved, blocked)
-- Last updated timestamp
-- Blockers
+Each flow maintains `_status.md`:
+- Current phase and status
 - Progress checklist
+- Blockers
 - Context notes for resuming
-- Fork history (if applicable)
 - Next actions
 
 ## Best Practices
 
 ### Do
-- Always update `_status.md` after significant changes
+- Update `_status.md` after significant changes
 - Wait for explicit approval before phase transitions
-- Ask questions when uncertain
-- Document deviations from the plan
-- Keep client documentation simple and jargon-free (DDD)
+- Use TDD for correctness-critical logic
+- Use DDD when stakeholder buy-in needed
+- Think module-first, not file-type-first
 
 ### Don't
-- Skip phases (each catches different error classes)
-- Assume approval without explicit confirmation
-- Make silent scope changes without updating artifacts
-- Leave `_status.md` stale
-- Use technical jargon in client-facing docs (DDD)
-
-## Integration with Meta-Projects
-
-The Speckit sync commands enable bidirectional synchronization between:
-
-- **Meta-Project**: High-level architecture specs
-- **Sub-Projects**: Detailed implementation flows
-
-### Push (Meta → Sub)
-Transfer architectural requirements to implementation context:
-```
-/speckit.sdd push [feature] [subproject-path]
-/speckit.ddd push [feature] [subproject-path]
-```
-
-### Pull (Sub → Meta)
-Update architecture with implementation realities:
-```
-/speckit.sdd pull [feature] [subproject-path]
-/speckit.ddd pull [feature] [subproject-path]
-```
-
-### Status Check
-Verify alignment between meta and sub-projects:
-```
-/speckit.sdd status [feature]
-/speckit.ddd status [feature]
-```
-
-## SDD vs DDD: Which to Use?
-
-### Use SDD when:
-- Working on internal features
-- Documentation is primarily for developers
-- Client communication is handled separately
-- You need a lightweight 4-phase process
-
-### Use DDD when:
-- Building client-facing features
-- Stakeholder communication is important
-- You need to deliver user-friendly documentation
-- Documentation is part of deliverables
-- You want a complete 5-phase process
-
-## Example Flow
-
-```bash
-# Start a new DDD flow
-/ddd start user-authentication
-
-# Work through requirements phase
-# ... iterate on 01-requirements.md ...
-# User: "requirements approved"
-
-# Move to specifications
-# ... design architecture in 02-specifications.md ...
-# User: "specs approved"
-
-# Create implementation plan
-# ... break down tasks in 03-plan.md ...
-# User: "plan approved"
-
-# Execute implementation
-# ... implement features, log in 04-implementation-log.md ...
-# User: "ready for docs"
-
-# Create client documentation
-# ... write README.md in simple terms ...
-# User: "docs approved"
-
-# Flow complete!
-```
+- Skip phases
+- Create separate flows for tests/UI of a module
+- Assume approval without confirmation
+- Use technical jargon in DDD documentation phase
+- Run /legacy without reviewing results
 
 ## Session Handoff
 
-When ending a session mid-flow:
-
+When ending mid-flow:
 1. Update `_status.md` with current state
 2. Document in-flight reasoning
 3. List explicit next steps
-4. Note any context that might be lost
 
 New sessions read `_status.md` first to reconstruct context.
 
-## Contributing
-
-When adding new templates or commands:
-
-1. Update all IDE-specific command directories
-2. Keep templates in `flows/.templates/`
-3. Document in relevant flow markdown files
-4. Update this README
-
-## License
-
-[Add your license here]
-
-## Support
-
-For issues, questions, or contributions, please refer to the project repository.
-
 ---
 
-**Note**: This template is designed to work with AI-powered development tools. The structured approach enables AI agents to maintain context across sessions and deliver high-quality, traceable implementations.
+**Note**: This template is designed for AI-assisted development. The structured approach enables AI agents to maintain context across sessions and deliver traceable implementations.
