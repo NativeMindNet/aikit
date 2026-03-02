@@ -1,6 +1,7 @@
 # ADR-[NUMBER]: [TITLE]
 
 > **Status**: DRAFT | APPROVED | REJECTED
+> **Type**: constraining | enabling (optional)
 > **Created**: [DATE]
 > **Author**: [NAME]
 

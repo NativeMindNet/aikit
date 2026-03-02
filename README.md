@@ -96,7 +96,12 @@ Each phase requires explicit approval before advancing:
 │   ├── ddd-[feature]/            # DDD flow instances
 │   ├── tdd-[feature]/            # TDD flow instances
 │   ├── vdd-[feature]/            # VDD flow instances
-│   └── adr-[NNN]-[name]/         # ADR instances (numbered)
+│   ├── adr-[NNN]-[name]/         # ADR instances (numbered)
+│   └── roadmap/                  # Flow orchestration
+│       ├── _status.md            # Current state
+│       ├── dependencies.md       # Flow dependency graph
+│       ├── plan.md               # Master implementation plan
+│       └── log.md                # Execution history
 │
 ├── .claude/commands/             # Claude Code commands
 ├── .cursor/prompts/commands/     # Cursor commands
@@ -150,9 +155,25 @@ Advanced tools for specification management:
 
 **ADR Flow Phases**: `DRAFT → REVIEW → APPROVED | REJECTED`
 
-Each phase requires explicit approval:
-- "ready for review" (DRAFT → REVIEW)
-- "ADR approved" or "ADR rejected" (REVIEW → decision)
+**ADR Types**: `constraining` (selects from options) | `enabling` (adds capabilities)
+
+### Roadmap - Flow Orchestration
+
+| Command | Description |
+|---------|-------------|
+| `/roadmap` | BFS: Document all flows, then implement (breadth-first) |
+| `/roadmap [flow]` | DFS: Complete specific flow + its blockers (depth-first) |
+| `/roadmap status` | Show current roadmap state |
+
+**BFS Mode** (no args): Maximizes documentation before implementation
+- Documents all flows to PLAN approved
+- Builds master implementation plan
+- Executes by plan
+
+**DFS Mode** (with flow): Shortest path to complete target
+- Finds blocking dependencies recursively
+- Completes blockers depth-first
+- Completes target flow
 
 ## Workflow Phases Explained
 

@@ -4,9 +4,13 @@ Master index of all Architecture Decision Records.
 
 ## Active ADRs
 
-| # | Name | Title | Status | Created | Decided | File |
-|---|------|-------|--------|---------|---------|------|
-| - | - | No ADRs yet | - | - | - | - |
+| # | Name | Title | Type | Status | Created | Decided | File |
+|---|------|-------|------|--------|---------|---------|------|
+| - | - | No ADRs yet | - | - | - | - | - |
+
+### Types
+- **constraining** - selects from options, closes alternatives
+- **enabling** - adds new capabilities, expands scope
 
 ## Statistics
 

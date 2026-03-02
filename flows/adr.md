@@ -232,11 +232,16 @@ In ADRs:
 
 ## Meta
 - **Number**: ADR-[NNN]
+- **Type**: constraining | enabling (optional)
 - **Status**: DRAFT | REVIEW | APPROVED | REJECTED | SUPERSEDED
 - **Created**: [date]
 - **Decided**: [date, if decided]
 - **Author**: [name]
 - **Reviewers**: [names]
+
+### ADR Types
+- **constraining**: Selects from options, closes alternatives (e.g., "Use PostgreSQL, not MongoDB")
+- **enabling**: Adds new capabilities, expands scope (e.g., "Add Loongson support")
 
 ## Context
 
