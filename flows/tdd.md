@@ -30,41 +30,124 @@ Requirements capture the **what** and **why**:
 - Constraints and non-goals
 - Open questions
 
-### Phase 2: Tests (TDD-specific)
+### Phase 2: Tests (TDD-specific) - Cases-First Thinking
 
 **Input**: Approved requirements
 **Output**: `flows/tdd-[name]/02-tests.md`
 
-Tests phase defines **test cases** in simple format before specs:
-- Test scenarios mapped to requirements
-- Input → Expected Output pairs
-- Edge cases and boundary conditions
-- Error scenarios
-- Integration test flows
-- Simple format (no code, just logic)
+**Critical**: This phase is NOT about writing test code. It's about **exhaustive behavioral analysis** - identifying ALL cases that define correct behavior. Logic will emerge FROM these cases.
 
-**Simple Test Format:**
+#### Cases-First Approach
+
 ```
-## Test: [Test Name]
+1. ENUMERATE ALL BEHAVIORS
+   - Happy paths (normal operation)
+   - Edge cases (boundaries, limits)
+   - Error cases (invalid input, failures)
+   - Race conditions (concurrent scenarios)
+   - State transitions (before/after)
+
+2. DEFINE SUCCESS CRITERIA FOR EACH
+   - What exactly should happen?
+   - What state changes occur?
+   - What outputs are produced?
+
+3. IDENTIFY COVERAGE GAPS
+   - Which behaviors are untestable? Why?
+   - Which require integration tests?
+   - Which require manual verification?
+
+4. DESIGN EMERGES FROM CASES
+   - Cases reveal necessary interfaces
+   - Cases reveal data structures
+   - Cases reveal error handling needs
+```
+
+#### Test Case Format
+
+```markdown
+## Behavior: [Descriptive behavior name]
+
 **Requirement**: [Linked requirement ID]
-**Given**: [Initial state/preconditions]
-**When**: [Action or event]
-**Then**: [Expected outcome]
-**Edge Cases**: [Special conditions]
+**Type**: unit | integration | e2e
+
+### Case 1: [Specific scenario]
+**Given**: [Complete initial state]
+**When**: [Exact action/event]
+**Then**: [Precise expected outcome]
+
+### Case 2: [Edge scenario]
+**Given**: [Edge condition state]
+**When**: [Action at boundary]
+**Then**: [Expected boundary behavior]
+
+### Case 3: [Error scenario]
+**Given**: [State that will cause error]
+**When**: [Action that triggers error]
+**Then**: [Expected error handling]
+
+### Derived Design Implications
+- [Interface needed for this behavior]
+- [Data structure implied by cases]
+- [Error type needed]
 ```
 
-### Phase 3: Specifications
+#### Completeness Checklist
+
+Before approving tests phase:
+- [ ] All requirements have corresponding behaviors
+- [ ] All happy paths covered
+- [ ] All edge cases identified
+- [ ] All error scenarios defined
+- [ ] State transitions documented
+- [ ] Integration points identified
+- [ ] Design implications extracted
+
+### Phase 3: Specifications - Derived from Tests
 
 **Input**: Approved test cases
 **Output**: `flows/tdd-[name]/03-specifications.md`
 
+**Critical**: Specifications are DERIVED from test cases, not invented independently. Each spec element must trace to test cases that validate it.
+
+#### Derivation Process
+
+```
+Test Cases → Implied Interfaces → Specifications
+Test Cases → Implied Data Structures → Specifications
+Test Cases → Implied Error Handling → Specifications
+```
+
+#### Specification Structure
+
+```markdown
+## Interface: [Name]
+
+**Derived from tests**: [List of test case IDs]
+
+### Methods/Functions
+[Each method exists because tests require it]
+
+### Data Structures
+[Each structure exists because tests operate on it]
+
+### Error Types
+[Each error exists because tests expect it]
+
+### Traceability Matrix
+| Spec Element | Validated By Tests |
+|--------------|-------------------|
+| method_a()   | test_1, test_2    |
+| struct_b     | test_3, test_4    |
+```
+
 Specifications add the **how** at architectural level, designed to pass tests:
-- Affected systems/components
-- Data models and interfaces
-- Behavior descriptions
-- Edge cases and error handling
-- Dependencies and integration points
-- **Test coverage mapping** from approved tests
+- Affected systems/components (implied by integration tests)
+- Data models and interfaces (implied by test inputs/outputs)
+- Behavior descriptions (directly from test cases)
+- Edge cases and error handling (from error test cases)
+- Dependencies and integration points (from integration tests)
+- **Every spec element traceable to tests**
 
 ### Phase 4: Plan
 

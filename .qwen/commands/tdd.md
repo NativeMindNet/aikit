@@ -43,18 +43,63 @@ Parse the arguments to determine the action:
 - Update `01-requirements.md` iteratively
 - Wait for explicit "requirements approved" before advancing
 
-### TESTS Phase (TDD-specific)
-- Define test cases in simple format (Given/When/Then)
-- Map tests to requirements
-- Cover edge cases and error scenarios
-- Define input → expected output pairs
+### TESTS Phase (TDD-specific) - Cases-First Thinking
+
+**Critical**: This is NOT about writing test code. It's about exhaustive behavioral analysis.
+
+**Cases-First Approach:**
+```
+1. ENUMERATE ALL BEHAVIORS
+   - Happy paths, edge cases, error cases
+   - State transitions, race conditions
+   - ALL scenarios that define correctness
+
+2. DEFINE SUCCESS CRITERIA FOR EACH
+   - Precise expected outcomes
+   - State changes
+   - Outputs produced
+
+3. DERIVE DESIGN FROM CASES
+   - Cases reveal necessary interfaces
+   - Cases reveal data structures
+   - Cases reveal error handling needs
+```
+
+**Per case document:**
+- Given: Complete initial state
+- When: Exact action/event
+- Then: Precise expected outcome
+- Design implications: What interface/structure this case requires
+
+**Completeness check before approval:**
+- [ ] All requirements have behaviors
+- [ ] All edge cases identified
+- [ ] All error scenarios defined
+- [ ] Design implications extracted
+
 - Update `02-tests.md` iteratively
 - Wait for explicit "tests approved" before advancing
 
-### SPECIFICATIONS Phase
+### SPECIFICATIONS Phase - Derived from Tests
+
+**Critical**: Specs are DERIVED from test cases, not invented independently.
+
+**Derivation:**
+```
+Test Cases → Implied Interfaces → Specs
+Test Cases → Implied Data Structures → Specs
+Test Cases → Implied Error Handling → Specs
+```
+
+**Every spec element must trace to tests:**
+- Interface exists because tests require it
+- Data structure exists because tests operate on it
+- Error type exists because tests expect it
+
 - Analyze codebase for affected systems
-- Design interfaces and data models
-- Document edge cases
+- Design interfaces and data models (derived from tests)
+- Document edge cases (from test cases)
+- Include traceability matrix (spec element → tests)
 - Update `03-specifications.md` iteratively
 - Wait for explicit "specs approved" before advancing
 
@@ -90,4 +135,6 @@ Parse the arguments to determine the action:
 - Never skip phases or assume approval
 - When uncertain, ask rather than assume
 - Before ending session, ensure handoff notes are complete
-- Remember: Tests phase defines success criteria before implementation details
+- Remember: Tests phase is CASES-FIRST - exhaustive behavioral analysis
+- Design EMERGES from cases, not the other way around
+- Every spec element must trace to test cases

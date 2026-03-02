@@ -31,16 +31,154 @@ Depth-first focused analysis:
 
 ---
 
-## Flow Type Auto-Detection
+## Flow Type Detection - Module-First Approach
 
-| Indicator | Flow Type |
-|-----------|-----------|
-| `*.test.*`, `*.spec.*`, `__tests__/`, `tests/` | TDD |
-| `components/`, `*.tsx`, `*.vue`, `*.svelte`, `templates/` | VDD |
-| `README.md`, public exports, `@public`, API docs | DDD |
-| Internal logic, utils, core, no UI, no public API | SDD |
+**Critical**: Flows are per-module, not per-file-type. Tests and UI are attributes of modules, not separate entities.
 
-Multiple indicators = multiple flows for same module.
+### Wrong Approach (file-type grouping)
+```
+tests/*.test.ts      → tdd-all-tests     ❌
+components/*.tsx     → vdd-all-ui        ❌
+```
+
+### Correct Approach (module-centric)
+```
+src/auth/
+├── auth.service.ts  ─┐
+├── auth.test.ts     ─┼→ ONE flow for auth module
+├── LoginForm.tsx    ─┤   Type determined by PRIMARY PURPOSE
+└── README.md        ─┘
+```
+
+### Module Detection Algorithm
+
+```
+1. IDENTIFY MODULE BOUNDARIES
+   - Directory with cohesive functionality
+   - Has entry point (index.ts, mod.rs, __init__.py)
+   - Clear single responsibility
+
+2. ANALYZE MODULE PURPOSE (primary driver)
+   - What problem does this module solve?
+   - Who is the primary consumer?
+   - What is the core deliverable?
+
+3. DETERMINE FLOW TYPE BY PURPOSE
+   Purpose: Internal service logic      → SDD
+   Purpose: Client-facing feature       → DDD
+   Purpose: Critical correctness        → TDD (test-first is essential)
+   Purpose: User interface/experience   → VDD (visual is primary)
+
+4. RECORD ATTRIBUTES (secondary)
+   - has_tests: true/false
+   - has_ui: true/false
+   - has_public_api: true/false
+   - has_docs: true/false
+```
+
+### Flow Type Decision Matrix
+
+| Primary Purpose | Has Tests | Has UI | Has Public API | → Flow Type |
+|-----------------|-----------|--------|----------------|-------------|
+| Internal logic | any | no | no | SDD |
+| Internal logic | any | yes | no | SDD + ui_components attribute |
+| Client feature | any | any | yes | DDD |
+| Correctness-critical | essential | any | any | TDD |
+| User experience | any | primary | any | VDD |
+
+### TDD Selection Criteria - Cases-First Indicator
+
+**TDD is NOT just "has tests"**. TDD flow is for modules where:
+
+```
+1. CORRECTNESS IS CRITICAL
+   - Financial calculations
+   - Security logic
+   - Data integrity
+   - State machines
+   - Protocol implementations
+
+2. BEHAVIOR MUST BE EXHAUSTIVELY DEFINED
+   - All edge cases matter
+   - Failures have serious consequences
+   - Logic is complex with many branches
+
+3. TESTS SHOULD DRIVE DESIGN
+   - Interface not yet defined
+   - Multiple valid implementations possible
+   - Need to discover design through cases
+```
+
+**Indicators in existing code**:
+```
+- High test coverage (>80%)
+- Tests check edge cases, not just happy paths
+- Tests define behavior (not just verify implementation)
+- Test names describe behaviors, not methods
+- Property-based tests present
+- Mutation testing used
+```
+
+**Counter-indicators (use SDD instead)**:
+```
+- Tests exist but only smoke tests
+- Tests verify implementation details
+- Low coverage, tests added later
+- Tests named after methods (test_foo_method)
+```
+
+### Module Attributes (not separate flows)
+
+```markdown
+## Module: auth
+
+**Flow**: sdd-auth
+**Type**: SDD (internal service)
+
+**Attributes**:
+- has_tests: true (12 test files)
+- has_ui: true (LoginForm, RegisterForm)
+- has_public_api: false
+- test_coverage: 85%
+
+**Note**: UI components are part of auth module,
+not a separate VDD flow. They implement auth UX.
+```
+
+### When to Create Separate Flows
+
+Create SEPARATE flow only when:
+```
+1. Different ownership/team
+2. Independent release cycle
+3. Separate requirements lifecycle
+4. Can be developed in isolation
+```
+
+Do NOT create separate flow for:
+```
+1. Tests of a module (attribute of module)
+2. UI of a module (attribute of module)
+3. Docs of a module (attribute of module)
+```
+
+### Colocation Principle
+
+Related artifacts belong to same flow:
+```
+sdd-auth/
+├── 01-requirements.md     ← includes UI requirements
+├── 02-specifications.md   ← includes component specs
+├── 03-plan.md            ← includes test plan
+└── _status.md
+
+Code it describes:
+src/auth/
+├── auth.service.ts
+├── auth.test.ts          ← tests are part of auth
+├── LoginForm.tsx         ← UI is part of auth
+└── README.md             ← docs are part of auth
+```
 
 ---
 

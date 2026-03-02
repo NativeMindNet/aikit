@@ -38,14 +38,33 @@ Depth-first focused analysis:
 
 ---
 
-## Flow Type Auto-Detection
+## Flow Type Detection - Module-First Approach
 
-| Indicator | Flow Type |
-|-----------|-----------|
-| `*.test.*`, `*.spec.*`, `__tests__/`, `tests/` | TDD |
-| `components/`, `*.tsx`, `*.vue`, `*.svelte`, `templates/` | VDD |
-| `README.md`, public exports, `@public`, API docs | DDD |
-| Internal logic, utils, core, no UI, no public API | SDD |
+Flows are per-module, not per-file-type. Tests and UI are ATTRIBUTES of modules.
+
+### Wrong: File-type grouping
+```
+tests/*.test.ts → tdd-all-tests     ❌
+components/*.tsx → vdd-all-ui       ❌
+```
+
+### Correct: Module-centric
+```
+src/auth/ (all files) → ONE flow (sdd-auth or tdd-auth)
+```
+
+### Algorithm
+1. IDENTIFY MODULE BOUNDARIES (directory with cohesive functionality)
+2. ANALYZE PURPOSE (what problem does it solve?)
+3. DETERMINE TYPE BY PURPOSE:
+   - Internal logic → SDD
+   - Client-facing → DDD
+   - Correctness-critical → TDD
+   - UX-primary → VDD
+4. RECORD ATTRIBUTES (has_tests, has_ui, has_api)
+
+### Colocation Principle
+Tests, UI, docs of a module = attributes, NOT separate flows
 
 ---
 
