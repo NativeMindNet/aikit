@@ -16,12 +16,33 @@ This project uses structured development workflows. Each flow has documentation 
 | **VDD** | Visual-Driven Development | `flows/vdd.md` | `flows/.templates/vdd/` |
 | **ADR** | Architecture Decision Records | `flows/adr.md` | `flows/.templates/adr/` |
 
+### Orchestration Commands
+
+| Command | Approach | Purpose |
+|---------|----------|---------|
+| `/waterfall` | BFS | Complete ALL docs before ANY implementation |
+| `/roadmap` | DFS | Shortest path to specific goal or MVP |
+| `/legacy` | Reverse | Analyze existing code, generate docs |
+
+**BFS vs DFS:**
+```
+/waterfall (BFS):              /roadmap (DFS):
+  All REQ approved               flow-1: REQ→SPEC→PLAN→IMPL ✓
+  All SPEC approved              flow-2: REQ→SPEC→PLAN→IMPL ✓
+  All PLAN approved              Goal achieved!
+  Master plan                    (other flows skipped)
+  Implementation
+```
+
 ### Quick Reference
 
 - **Start flow**: `/sdd start [name]`, `/ddd start [name]`, etc.
 - **Resume flow**: `/sdd resume [name]`, `/ddd resume [name]`, etc.
 - **Start ADR**: `/adr start [name]`
 - **List ADRs**: `/adr list`
+- **Full project (BFS)**: `/waterfall`
+- **Target goal (DFS)**: `/roadmap "user can login"`
+- **MVP (DFS)**: `/roadmap`
 
 ---
 
@@ -119,6 +140,9 @@ flows/ddd-[feature-name]/    # DDD flows
 flows/tdd-[feature-name]/    # TDD flows
 flows/vdd-[feature-name]/    # VDD flows
 flows/adr-[NNN]-[name]/      # ADRs (numbered)
+flows/waterfall/             # BFS orchestration state
+flows/roadmap/               # DFS orchestration state
+flows/legacy/                # Reverse engineering state
 ```
 
 ### Status Tracking

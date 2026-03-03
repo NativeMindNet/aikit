@@ -1,38 +1,51 @@
 # Roadmap Execution Log
 
+## Goal
+
+[none] | MVP | "[goal]"
+
 ## Session History
 
-### [DATE] - [MODE: BFS/DFS]
+### [DATE] - Session N
 
-**Target**: [all / specific flow]
+**Current flow:** [flow-name]
+**Phase:** [REQ/SPEC/PLAN/IMPL]
 
-**Actions**:
-1. [Action taken]
-2. [Action taken]
+**Actions:**
+- [Action taken]
+- [Status changed]
 
-**Results**:
-- [Outcome]
+**Synced to:**
+- flows/[type]-[name]/_status.md: [what updated]
+- flows/roadmap/_status.md: [what updated]
 
-**Decisions**:
-- [Any decisions made during execution]
-
-**Next**:
-- [What to continue next session]
+**Next session:**
+- [What to continue]
 
 ---
 
-## Completed Flows
+## Status Change Log
 
-| Flow | Type | Completed | Session |
-|------|------|-----------|---------|
-| - | - | - | - |
+| Timestamp | Flow | Artifact | Old Status | New Status | Synced to Flow |
+|-----------|------|----------|------------|------------|----------------|
+| - | - | - | - | - | - |
 
-## Deferred Items
+---
 
-| Item | Reason | Deferred On |
-|------|--------|-------------|
+## Path Changes
+
+| Date | Change | Reason |
+|------|--------|--------|
 | - | - | - |
 
 ---
 
-*Append new entries at the top.*
+## Decisions Made
+
+| Date | Decision | Rationale | Affects |
+|------|----------|-----------|---------|
+| - | - | - | - |
+
+---
+
+*Append-only log. Do not edit previous entries.*

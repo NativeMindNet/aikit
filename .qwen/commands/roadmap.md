@@ -1,169 +1,104 @@
-# Roadmap - Flow Orchestration
+# Roadmap - DFS Flow Orchestration
 
-Orchestrates work across all SDD/DDD/TDD/VDD flows with dependency-aware execution.
+Depth-first development: shortest path to working functionality.
+
+## First Run: Initialize from Templates
+
+Check if `flows/roadmap/` exists. If not, copy from `flows/.templates/roadmap/`.
 
 ## Command: $ARGUMENTS
 
-### No arguments - BFS Mode (breadth-first)
-
-Maximize documentation before implementation:
-
 ```
-1. Read ALL flow documents + ADRs → build dependency graph
-2. Show dependency graph to user
-3. For each incomplete flow (respecting dependencies):
-   - REQUIREMENTS → approved
-   - SPECIFICATIONS → approved
-   - PLAN → approved
-4. Build/rebuild master implementation plan
-5. Execute implementation by plan
+/roadmap                      # DFS to MVP (minimum viable product)
+/roadmap [goal]               # DFS to specific goal
+/roadmap status               # Show current state without executing
 ```
 
-### `[flow-name]` - DFS Mode (depth-first)
-
-Shortest path to complete specific flow:
-
+### Examples:
 ```
-1. Read ALL flow documents + ADRs → build dependency graph
-2. Show dependency graph (highlight target path)
-3. Find blockers for [flow-name] recursively
-4. For each blocker (deepest first):
-   - Complete REQ → SPEC → PLAN → IMPLEMENTATION
-5. Complete [flow-name] REQ → SPEC → PLAN → IMPLEMENTATION
+/roadmap                          # MVP: core functionality working
+/roadmap "user can login"         # Goal: everything needed for login
+/roadmap "dashboard shows data"   # Goal: everything for dashboard
 ```
 
-### `status` - Show current state
+## Core Principle: DFS (Depth-First)
 
-Display roadmap status without executing.
+**Implement the MINIMUM path to reach the goal, completing each flow FULLY before moving to next.**
+
+```
+Goal: "user can login"
+
+DFS Path Found:
+  sdd-database ──> sdd-auth ──> [GOAL]
+
+Execution (complete each fully):
+  1. sdd-database: REQ → SPEC → PLAN → IMPLEMENT ✓
+  2. sdd-auth: REQ → SPEC → PLAN → IMPLEMENT ✓
+  3. Goal achieved!
+
+NOT touched (not on path):
+  - ddd-dashboard
+  - sdd-reporting
+```
 
 ---
 
 ## Execution Steps
 
-### Step 1: Analyze Dependencies
+### Step 1: Determine Target
 
 ```
-1. Read flows/roadmap/_status.md
-2. Scan all flows/sdd-*/_, flows/ddd-*/_, flows/tdd-*/_, flows/vdd-*/_
-3. Read each _status.md and document content
-4. Read flows/adr-*/ for constraining/enabling context
-5. Build dependency graph from document references
-6. Update flows/roadmap/dependencies.md
+IF goal provided:
+  - Parse goal into target flow(s)
+  - Find all blockers recursively
+  - Build critical path
+
+IF no goal (MVP mode):
+  - Identify core flows
+  - Build minimal working path
 ```
 
-### Step 2: Show Dependency Graph
+### Step 2: Execute DFS
 
-Always display before proceeding:
-
+**For each flow on critical path (in order):**
 ```
-=== DEPENDENCY GRAPH ===
-
-Independent:
-  ○ tdd-validation (PLAN)
-  ○ sdd-utils (SPEC)
-
-Dependency Chain:
-  ○ sdd-auth (REQ)
-    └──> sdd-api (blocked)
-         └──> ddd-dashboard (blocked)
-
-ADRs (context):
-  ◆ ADR-001 [constraining] Use PostgreSQL
-  ◇ ADR-002 [enabling] Add i18n support
-
-=========================
+COMPLETE_FLOW(flow):
+  1. REQ → draft → approve → SYNC
+  2. SPEC → draft → approve → SYNC
+  3. PLAN → draft → approve → SYNC
+  4. IMPL → execute → SYNC
+  5. Mark COMPLETE, move to next
 ```
-
-### Step 3: Execute Based on Mode
-
-**BFS (no args):**
-- Process flows in dependency order
-- Complete each flow to PLAN approved
-- Ask user approval at each phase transition
-- After all plans ready → build master plan
-- Execute master plan
-
-**DFS (with flow-name):**
-- Identify target flow
-- Find all blockers recursively
-- Process blockers depth-first to completion
-- Process target flow to completion
-
-### Step 4: Update Artifacts
-
-After each action:
-- Update `flows/roadmap/_status.md`
-- Update `flows/roadmap/dependencies.md`
-- Update `flows/roadmap/plan.md` (when building/rebuilding)
-- Append to `flows/roadmap/log.md`
 
 ---
 
-## ADR Handling
+## Status Synchronization
 
-ADRs are **read-only** in roadmap:
-- Read for context (constraining/enabling decisions)
-- Do NOT create new ADRs
-- Reference in dependency graph
-- Note conflicts if ADR contradicts flow requirements
-
----
-
-## Phase Transitions
-
-Same rules as individual flows:
-- "requirements approved" → SPEC phase
-- "specs approved" → PLAN phase
-- "plan approved" → IMPLEMENTATION phase
-
----
-
-## Conflict Resolution
-
-If flows have conflicting requirements:
-1. Stop and highlight conflict
-2. Ask user which takes priority
-3. Document decision in log.md
-4. Suggest creating ADR for future reference
-
----
-
-## Files - Dual Context
-
-Roadmap always works with TWO sets of files simultaneously:
+**CRITICAL**: Every status change updates TWO places:
 
 ```
-flows/roadmap/                    flows/[type]-[current]/
-├── _status.md       ←sync→       ├── _status.md
-├── dependencies.md               ├── 01-requirements.md
-├── plan.md                       ├── 02-specifications.md
-└── log.md                        ├── 03-plan.md
-                                  └── 04-implementation-log.md
+┌────────────────────┐        ┌────────────────────┐
+│ flows/roadmap/     │  sync  │ flows/[type]-[x]/  │
+│   _status.md       │◄──────►│   _status.md       │
+└────────────────────┘        └────────────────────┘
 ```
 
-**Roadmap files** - orchestration state (which flow, what phase overall)
-**Flow files** - current work (actual requirements, specs, plans)
+---
 
-### Update Rules
+## Comparison with BFS (/waterfall)
 
-When working on a flow:
-1. Update `flows/[type]-[name]/_status.md` - flow progress
-2. Update `flows/roadmap/_status.md` - overall progress, current target
-3. Update `flows/roadmap/dependencies.md` - if dependencies change
-4. Update `flows/roadmap/log.md` - session actions
-
-When completing a flow:
-1. Mark flow `_status.md` as complete
-2. Update `flows/roadmap/plan.md` - check off completed
-3. Update `flows/roadmap/dependencies.md` - unblock dependents
-4. Log completion in `flows/roadmap/log.md`
+| Aspect | /roadmap (DFS) | /waterfall (BFS) |
+|--------|----------------|------------------|
+| Goal | Reach specific target | Complete everything |
+| Order | Per flow: REQ→SPEC→PLAN→IMPL | All REQ → All SPEC → All PLAN |
+| Speed | Faster to first working code | Comprehensive |
 
 ---
 
 ## Always
 
-- Show dependency graph before any execution
-- Update roadmap files after each significant action
-- Never skip phase approvals
-- Log all sessions to log.md
-- ADRs are read-only context
+- Complete each flow FULLY before moving to next
+- SYNC status to BOTH roadmap and individual flow
+- Skip flows not on critical path
+- Ask approval at phase transitions
+- Log everything to log.md

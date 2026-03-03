@@ -1,40 +1,60 @@
-# Flow Dependencies Graph
+# Roadmap Dependencies Graph
 
 ## Overview
 
-This document maps dependencies between all active flows (SDD/DDD/TDD/VDD).
+Full dependency graph. Critical path highlighted for DFS execution.
+
+## Current Goal
+
+[none] | MVP | "[goal]"
 
 ## Dependency Graph
 
 ```
-[flow-a] ──blocks──> [flow-b] ──blocks──> [flow-c]
-                          │
-                          └──blocks──> [flow-d]
+Legend:
+  ════  Critical path (will be executed)
+  ────  Other dependencies (skipped)
+  ●     Complete
+  ◐     In progress
+  ○     Pending
+  ∅     Skipped
+
+[flow-a] ══════> [flow-b] ══════> [GOAL]
+                     │
+    [flow-c] ────────┘ (skipped, not on path)
 ```
 
-## Flows
+## Critical Path (DFS Order)
 
-### Independent (no blockers)
+| Order | Flow | Type | Status | Blocks |
+|-------|------|------|--------|--------|
+| 1 | - | - | - | - |
 
-| Flow | Type | Phase | Status |
-|------|------|-------|--------|
-| - | - | - | - |
+## All Flows
 
-### Dependent (has blockers)
+### On Critical Path
 
-| Flow | Type | Phase | Blocked By | Status |
-|------|------|-------|------------|--------|
+| Flow | Type | Phase | Status | Blocked By |
+|------|------|-------|--------|------------|
 | - | - | - | - | - |
+
+### Not on Path (Skipped)
+
+| Flow | Type | Why Skipped |
+|------|------|-------------|
+| - | - | - |
 
 ## ADRs (Read-only context)
 
-| ADR | Type | Status | Affects Flows |
-|-----|------|--------|---------------|
+| ADR | Type | Status | Affects Critical Path |
+|-----|------|--------|----------------------|
 | - | - | - | - |
 
 ## Dependency Details
 
 ### [flow-name]
+
+**On critical path:** yes/no
 
 **Blocked by:**
 - [other-flow]: [reason]

@@ -1,34 +1,51 @@
 # Roadmap Status
 
-## Mode
+## Mode: DFS
 
-BFS | DFS | IDLE
+## Goal
+
+[none] | MVP (auto-detected) | "[user-specified goal]"
 
 ## Current Phase
 
-ANALYZING | DOCUMENTING | PLANNING | IMPLEMENTING | COMPLETE
+IDLE | ANALYZING | EXECUTING | COMPLETE
 
-## Last Updated
+## Critical Path
 
-[DATE] by [AGENT/PERSON]
+| Order | Flow | Type | Status | Phase | Progress |
+|-------|------|------|--------|-------|----------|
+| - | - | - | - | - | - |
 
-## Active Target
+## Current Focus
 
-[If DFS mode: target flow name]
+- **Flow**: [none]
+- **Phase**: IDLE
+- **Status**: IDLE
+- **Blockers**: [none]
 
-## Progress
+## Path Progress
 
-- [ ] Dependencies analyzed
-- [ ] All flows documented (REQ → SPEC → PLAN)
-- [ ] Master plan created
-- [ ] Implementation started
-- [ ] Implementation complete
+- Flows on path: 0
+- Flows complete: 0/0
+- Current flow progress: 0%
+- Overall: 0%
 
-## Blockers
+## Skipped Flows (not on critical path)
 
-- [None, or what's blocking progress]
+| Flow | Type | Reason Skipped |
+|------|------|----------------|
+| - | - | - |
 
-## Next Actions
+## Last Action
 
-1. [Immediate next step]
-2. [Following step]
+[none]
+
+## Next Action
+
+1. Set goal or detect MVP
+2. Build critical path
+3. Begin DFS execution
+
+---
+
+*Updated by /roadmap*
