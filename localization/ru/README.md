@@ -114,17 +114,27 @@ REQUIREMENTS → VISUAL → SPECIFICATIONS → PLAN → IMPLEMENTATION → DOCUM
 │   ├── tdd-[feature]/            # Экземпляры потока TDD
 │   ├── vdd-[feature]/            # Экземпляры потока VDD
 │   ├── adr-[NNN]-[name]/         # Экземпляры ADR (нумерованные)
-│   ├── roadmap/                  # Оркестрация потоков
+│   ├── roadmap/                  # Оркестрация потоков (DFS)
 │   │   ├── _status.md
 │   │   ├── dependencies.md
 │   │   ├── plan.md
 │   │   └── log.md
+│   ├── waterfall/                # Оркестрация потоков (BFS)
+│   │   ├── _status.md
+│   │   ├── layers.md
+│   │   ├── layer-0.md
+│   │   ├── layer-1.md
+│   │   ├── layer-2.md
+│   │   ├── gaps.md
+│   │   ├── master-plan.md
+│   │   └── log.md
 │   └── legacy/                   # Reverse engineering
 │       ├── _status.md
+│       ├── _traverse.md
 │       ├── log.md
-│       ├── analysis/
 │       ├── mapping.md
-│       └── review.md
+│       ├── review.md
+│       └── understanding/
 │
 ├── .claude/commands/             # Команды Claude Code
 ├── .cursor/prompts/commands/     # Команды Cursor
@@ -161,23 +171,50 @@ REQUIREMENTS → VISUAL → SPECIFICATIONS → PLAN → IMPLEMENTATION → DOCUM
 
 **Поток**: `DRAFT → REVIEW → APPROVED | REJECTED`
 
-### Roadmap — Оркестрация потоков
+### Roadmap — Оркестрация потоков (DFS)
 
 | Команда | Описание |
 |---------|----------|
-| `/roadmap` | BFS: Документировать все потоки, затем реализовать |
-| `/roadmap [flow]` | DFS: Завершить конкретный поток + blockagers |
-| `/roadmap status` | Показать текущее состояние |
+| `/roadmap` | DFS к MVP: кратчайший путь к working core |
+| `/roadmap [goal]` | DFS к цели: кратчайший путь к конкретной функции |
+| `/roadmap status` | Показать dependency graph и прогресс |
 
-**Режим BFS** (без аргументов):
-- Документирует все потоки до PLAN approved
-- Строит мастер-план реализации
-- Выполняет по консолидированному плану
+**Режим DFS** (Depth-First):
+- Находит блокирующие зависимости рекурсивно
+- Завершает каждый поток ПОЛНОСТЬЮ перед переходом к следующему
+- Реализует МИНИМУМ пути для достижения цели
 
-**Режим DFS** (с потоком):
-- Рекурсивно находит блокирующие зависимости
-- Завершает blockagers depth-first
-- Завершает целевой поток
+**Пример:**
+```
+/roadmap "user can login"
+→ sdd-database: REQ→SPEC→PLAN→IMPLEMENT ✓
+→ sdd-auth: REQ→SPEC→PLAN→IMPLEMENT ✓
+→ GOAL achieved!
+```
+
+### Waterfall — Оркестрация потоков (BFS)
+
+| Команда | Описание |
+|---------|----------|
+| `/waterfall` | BFS: Документировать все потоки, скомпилировать layers, реализовать |
+| `/waterfall compile` | Скомпилировать layer-0/1/2 из approved plans |
+| `/waterfall gaps` | Показать unresolved gaps |
+| `/waterfall status` | Показать текущее состояние |
+
+**Режим BFS** (Breadth-First):
+- **Phase 1-3**: Документирует все потоки (REQ→SPEC→PLAN)
+- **Phase 4**: Компилирует в architectural layers (0/1/2)
+- **Phase 5**: Detect & resolve gaps в source flows
+- **Phase 6-7**: Реализует bottom-up (Layer 0 → Layer 1 → Layer 2)
+
+**Layer Architecture:**
+```
+Layer 2: FEATURE (UI, handlers)
+    ↑ depends on
+Layer 1: DOMAIN (business logic, API)
+    ↑ depends on
+Layer 0: SHARED (config, types, DB)
+```
 
 ### Legacy — Reverse Engineering
 
@@ -214,6 +251,21 @@ REQUIREMENTS → VISUAL → SPECIFICATIONS → PLAN → IMPLEMENTATION → DOCUM
 | Поведение должно быть исчерпывающе определено | TDD |
 | UI/UX является первичной заботой | VDD |
 | Визуальный дизайн определяет разработку | VDD |
+
+## Выбор оркестрации: Roadmap vs Waterfall
+
+| Ситуация | Оркестрация |
+|----------|-------------|
+| Нужен быстрый результат (MVP) | `/roadmap` |
+| Конкретная цель/функция | `/roadmap [goal]` |
+| Минимум кода для working feature | `/roadmap` |
+| Полное планирование проекта | `/waterfall` |
+| Несколько независимых функций | `/waterfall` |
+| Оптимизация по layers | `/waterfall` |
+| Нужно избежать gaps/conflicts | `/waterfall` |
+
+**DFS (/roadmap)**: Глубоко в один поток, завершить полностью, перейти к следующему.
+**BFS (/waterfall)**: Все потоки документировать, скомпилировать в layers, реализовать bottom-up.
 
 ## Переходы между фазами
 
