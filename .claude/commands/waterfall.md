@@ -1,6 +1,6 @@
 # Waterfall - BFS Flow Orchestration
 
-Complete breadth-first development: all documentation before any implementation.
+Complete breadth-first development with AI-optimized context management.
 
 ## First Run: Initialize from Templates
 
@@ -16,344 +16,235 @@ IF flows/waterfall/ does NOT exist:
 ## Command: $ARGUMENTS
 
 ```
-/waterfall                    # Full BFS - all flows, all details
+/waterfall                    # Full BFS - all flows, layered implementation
 /waterfall status             # Show current state without executing
+/waterfall compile            # Recompile layer docs from flows
 ```
 
-## Core Principle: BFS (Breadth-First) + Layered Implementation
+---
 
-**Document by FEATURES, implement by LAYERS.**
+## Core Architecture: Source of Truth + Derived Docs
+
+**Problem:** AI context window is limited. Loading all flows simultaneously is impossible.
+
+**Solution:** Flows are Source of Truth, Layer Docs are compiled/derived views.
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    ARCHITECTURE                                      │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  SOURCE OF TRUTH (business context):                                │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐              │
+│  │ sdd-auth │ │ sdd-api  │ │ddd-dash  │ │tdd-valid │   ~30KB each │
+│  │ (full)   │ │ (full)   │ │ (full)   │ │ (full)   │              │
+│  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘              │
+│       │            │            │            │                      │
+│       └────────────┴─────┬──────┴────────────┘                      │
+│                          │                                          │
+│                     COMPILE                                         │
+│                          │                                          │
+│                          ▼                                          │
+│  DERIVED DOCS (technical context, AI-optimized):                    │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐                            │
+│  │ layer-0  │ │ layer-1  │ │ layer-2  │   ~5KB each (compact!)     │
+│  │ (shared) │ │ (domain) │ │(feature) │                            │
+│  └──────────┘ └──────────┘ └──────────┘                            │
+│       │            │            │                                   │
+│       └────────────┴─────┬──────┘                                   │
+│                          │                                          │
+│               AI reads layer doc                                    │
+│               for implementation                                    │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+CONFLICT/GAP detected during compile?
+  → STOP
+  → Resolve in SOURCE flow
+  → Recompile layer doc
+```
+
+---
+
+## Key Principles
+
+### 1. Flows = Source of Truth
+
+```
+sdd-auth/requirements.md     ← Business requirements live HERE
+sdd-auth/specifications.md   ← Technical specs live HERE
+sdd-auth/plan.md             ← Task plans live HERE
+```
+
+**Never modify flows from layer docs. Always edit source, then recompile.**
+
+### 2. Layer Docs = Compiled Views
+
+```
+waterfall/layer-0.md  ← Compiled from: all L0 tasks across all flows
+waterfall/layer-1.md  ← Compiled from: all L1 tasks across all flows
+waterfall/layer-2.md  ← Compiled from: all L2 tasks across all flows
+```
+
+**Layer docs are regenerated. Manual edits will be lost.**
+
+### 3. Gap/Conflict Resolution
+
+```
+During compilation, if detected:
+  - Conflicting types between sdd-auth and sdd-api
+  - Missing dependency not defined in any flow
+  - Duplicate functionality
+  - Interface mismatch
+
+THEN:
+  1. STOP compilation
+  2. Report: "GAP: [description], affects: [flows]"
+  3. Ask user which flow to update
+  4. Update SOURCE flow
+  5. Recompile
+```
+
+---
+
+## Phases
 
 ```
 DOCUMENTATION (by features):
-  Phase 1: ALL Requirements    → understand business needs per feature
-  Phase 2: ALL Specifications  → define interfaces per feature
-  Phase 3: ALL Plans           → plan tasks per feature
+  Phase 1: ALL Requirements    → approve per feature
+  Phase 2: ALL Specifications  → approve per feature
+  Phase 3: ALL Plans           → approve per feature
 
-OPTIMIZATION:
-  Phase 4: Layer Extraction    → group tasks by architectural layer
-  Phase 5: Master Plan         → optimize execution order
+COMPILATION (derive layer docs):
+  Phase 4: Compile Layers      → extract, classify, detect gaps
+  Phase 5: Resolve Gaps        → fix in source flows, recompile
 
-IMPLEMENTATION (by layers):
-  Phase 6: Implementation      → execute bottom-up by layer
-```
-
-This ensures:
-- Business context preserved during planning
-- Implementation grouped by module (less context switching)
-- Shared code written once, used by all features
-- Maximum code reuse, minimum entropy
-
----
-
-## Why Layer Extraction?
-
-```
-WITHOUT Layer Extraction (by feature):
-  Feature A: [auth-1] [api-1] [ui-1]
-  Feature B: [auth-2] [api-2] [ui-2]
-  Feature C: [auth-3] [api-3] [ui-3]
-
-  Problem: 3× context switches in auth module
-           3× potential conflicts
-           3× duplicate patterns
-
-WITH Layer Extraction (by layer):
-  Layer 0 (Shared):  [config] [utils] [types]
-  Layer 1 (Domain):  [auth-1,2,3] [api-1,2,3]  ← grouped!
-  Layer 2 (Feature): [ui-1] [ui-2] [ui-3]
-
-  Benefit: 1× immersion in auth module
-           Consistent patterns
-           Shared code extracted
+IMPLEMENTATION (by layers, AI-optimized):
+  Phase 6: Master Plan         → order by layer
+  Phase 7: Implementation      → read layer doc, execute
 ```
 
 ---
 
-## Architectural Layers
+## Phase 4: Compile Layers (Critical)
+
+### Step 4.1: Extract Tasks
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    LAYER HIERARCHY                       │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│  Layer 2: FEATURE                                       │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐                   │
-│  │Feature A│ │Feature B│ │Feature C│  Feature-specific │
-│  └────┬────┘ └────┬────┘ └────┬────┘  UI, handlers     │
-│       │           │           │                         │
-│       ▼           ▼           ▼                         │
-│  Layer 1: DOMAIN                                        │
-│  ┌─────────────────────────────────────┐               │
-│  │  Auth  │  Users  │  API  │  Events │  Business logic│
-│  └─────────────────────────────────────┘               │
-│                      │                                  │
-│                      ▼                                  │
-│  Layer 0: SHARED/INFRASTRUCTURE                         │
-│  ┌─────────────────────────────────────┐               │
-│  │ Config │ Utils │ Types │ DB │ Logger│  Shared code  │
-│  └─────────────────────────────────────┘               │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-
-IMPLEMENTATION ORDER: Layer 0 → Layer 1 → Layer 2 (bottom-up)
+FOR each flow with approved plan:
+  FOR each task in plan:
+    Extract:
+      - task_id: unique identifier
+      - source_flow: which flow defined this
+      - description: what to do
+      - layer: 0/1/2 (classify)
+      - module: which module (auth, api, etc)
+      - dependencies: what it needs
+      - interfaces: what it provides
 ```
 
----
-
-## BFS Execution Flow
+### Step 4.2: Classify into Layers
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                      BFS WATERFALL                               │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐           │
-│  │Feature A│  │Feature B│  │Feature C│  │Feature D│           │
-│  └────┬────┘  └────┬────┘  └────┬────┘  └────┬────┘           │
-│       │            │            │            │                 │
-│       ▼            ▼            ▼            ▼                 │
-│  ╔═══════════════════════════════════════════════════╗         │
-│  ║        PHASE 1-3: DOCUMENTATION (by feature)      ║         │
-│  ║   REQ-A ✓    REQ-B ✓    REQ-C ✓    REQ-D ✓       ║         │
-│  ║  SPEC-A ✓   SPEC-B ✓   SPEC-C ✓   SPEC-D ✓       ║         │
-│  ║  PLAN-A ✓   PLAN-B ✓   PLAN-C ✓   PLAN-D ✓       ║         │
-│  ╚═══════════════════════════════════════════════════╝         │
-│                          │                                     │
-│                          ▼                                     │
-│  ╔═══════════════════════════════════════════════════╗         │
-│  ║           PHASE 4: LAYER EXTRACTION               ║         │
-│  ║                                                   ║         │
-│  ║  Tasks from ALL plans:                            ║         │
-│  ║    [A1][A2][A3] [B1][B2] [C1][C2][C3] [D1][D2]   ║         │
-│  ║                     │                             ║         │
-│  ║                     ▼                             ║         │
-│  ║  Grouped by layer:                                ║         │
-│  ║    L0 (shared):  [A1][C1]                        ║         │
-│  ║    L1 (domain):  [A2][B1][C2][D1]                ║         │
-│  ║    L2 (feature): [A3][B2][C3][D2]                ║         │
-│  ╚═══════════════════════════════════════════════════╝         │
-│                          │                                     │
-│                          ▼                                     │
-│  ╔═══════════════════════════════════════════════════╗         │
-│  ║           PHASE 5: MASTER PLAN                    ║         │
-│  ║     Execution order by layer (bottom-up)          ║         │
-│  ╚═══════════════════════════════════════════════════╝         │
-│                          │                                     │
-│                          ▼                                     │
-│  ╔═══════════════════════════════════════════════════╗         │
-│  ║           PHASE 6: IMPLEMENTATION                 ║         │
-│  ║                                                   ║         │
-│  ║  Execute L0: [A1] → [C1]           (shared)      ║         │
-│  ║  Execute L1: [A2] → [B1] → [C2] → [D1] (domain)  ║         │
-│  ║  Execute L2: [A3] → [B2] → [C3] → [D2] (feature) ║         │
-│  ╚═══════════════════════════════════════════════════╝         │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+LAYER 0 - SHARED/INFRASTRUCTURE:
+  - Database schemas, migrations
+  - Configuration, environment
+  - Shared types, interfaces
+  - Utilities, helpers
+  - Logging, monitoring
+
+LAYER 1 - DOMAIN/CORE:
+  - Business logic, services
+  - API endpoints
+  - Repositories, data access
+  - Validation rules
+  - Domain events
+
+LAYER 2 - FEATURE:
+  - UI components
+  - Page handlers
+  - Feature-specific integration
+  - E2E tests
 ```
 
----
-
-## Execution Steps
-
-### Step 1: Analyze All Flows
+### Step 4.3: Detect Gaps/Conflicts
 
 ```
-1. Read flows/waterfall/_status.md
-2. Scan all flows/sdd-*/, flows/ddd-*/, flows/tdd-*/, flows/vdd-*/
-3. Read each _status.md and all documents
-4. Read flows/adr-*/ for context
-5. Build complete dependency graph
-6. Update flows/waterfall/dependencies.md
+CHECK for each layer:
+
+1. TYPE CONFLICTS:
+   - Same type defined differently in multiple flows?
+   - Interface mismatch between producer/consumer?
+
+2. MISSING DEPENDENCIES:
+   - Task references something not defined anywhere?
+   - Circular dependency?
+
+3. DUPLICATES:
+   - Same functionality in multiple flows?
+   - Should be extracted to shared?
+
+4. INTERFACE GAPS:
+   - Layer 1 expects interface Layer 0 doesn't provide?
+   - Layer 2 calls method Layer 1 doesn't have?
 ```
 
-### Step 2: Show Complete Overview
-
-Always display before proceeding:
+### Step 4.4: Handle Gaps
 
 ```
-=== WATERFALL BFS STATUS ===
+IF gaps detected:
+  1. List all gaps with affected flows
+  2. Ask user: "Which flow should define [X]?"
+  3. Update SOURCE flow (requirements/specs/plan)
+  4. Mark flow as needing re-approval if significant
+  5. Recompile layers
 
-Flows Discovered: 4
-  ○ sdd-auth (REQ: draft, SPEC: none, PLAN: none)
-  ○ ddd-dashboard (REQ: approved, SPEC: draft, PLAN: none)
-  ○ tdd-validation (REQ: approved, SPEC: approved, PLAN: draft)
-  ○ sdd-api (REQ: none, SPEC: none, PLAN: none)
-
-Current Phase: REQUIREMENTS (1/6)
-  Approved: 2/4
-  Drafting: 1/4
-  Missing: 1/4
-
-Dependencies:
-  sdd-auth ──blocks──> sdd-api
-  sdd-api ──blocks──> ddd-dashboard
-
-Next: Complete requirements for sdd-auth, sdd-api
-
-=============================
+LOOP until no gaps
 ```
 
-### Step 3: Execute Documentation Phases (1-3)
-
-**Phase 1 - Requirements (by feature):**
-```
-FOR each flow without approved requirements:
-  1. Draft/review requirements
-  2. Ask user: "requirements approved?"
-  3. SYNC status to both waterfall/_status.md AND flow/_status.md
-  4. Continue until ALL requirements approved
-```
-
-**Phase 2 - Specifications (by feature):**
-```
-FOR each flow without approved specifications:
-  1. Draft/review specifications
-  2. Ask user: "specs approved?"
-  3. SYNC status
-  4. Continue until ALL specifications approved
-```
-
-**Phase 3 - Plans (by feature):**
-```
-FOR each flow without approved plan:
-  1. Draft/review plan
-  2. Ask user: "plan approved?"
-  3. SYNC status
-  4. Continue until ALL plans approved
-```
-
-### Step 4: Layer Extraction
-
-**Extract and classify all tasks from all approved plans:**
+### Step 4.5: Generate Layer Docs
 
 ```
-1. Read all approved plans
-2. Extract every task with metadata:
-   - Task ID
-   - Source flow
-   - Description
-   - Dependencies
-
-3. Classify each task into layer:
-
-   LAYER 0 - SHARED/INFRASTRUCTURE:
-   - Database schemas, migrations
-   - Configuration, environment
-   - Shared utilities, helpers
-   - Common types, interfaces
-   - Logging, monitoring setup
-
-   LAYER 1 - DOMAIN/CORE:
-   - Business logic
-   - Domain services
-   - API endpoints
-   - Data access
-   - Validation rules
-
-   LAYER 2 - FEATURE:
-   - UI components
-   - Feature-specific handlers
-   - Integration code
-   - Feature tests
-
-4. Within each layer, group by MODULE:
-   Layer 1 tasks grouped: [auth/*] [users/*] [api/*]
-
-5. Write to flows/waterfall/layers.md
-6. Ask user: "layer extraction approved?"
-```
-
-### Step 5: Master Plan
-
-```
-1. Read flows/waterfall/layers.md
-2. Order tasks:
-   - Layer 0 first (all shared code)
-   - Layer 1 second (grouped by module)
-   - Layer 2 last (feature-specific)
-3. Within each layer, respect dependencies
-4. Identify parallelization opportunities
-5. Create flows/waterfall/master-plan.md
-6. Ask user: "master plan approved?"
-```
-
-### Step 6: Implementation
-
-```
-Execute tasks in master plan order (by layer):
-
-FOR each layer (0 → 1 → 2):
-  FOR each module in layer:
-    FOR each task in module:
-      1. Execute task
-      2. Update implementation-log.md in relevant flow
-      3. SYNC status to waterfall AND flow
-      4. Continue to next task
+FOR layer in [0, 1, 2]:
+  Create waterfall/layer-{N}.md:
+    - All tasks for this layer
+    - Grouped by module
+    - Dependencies within layer
+    - Interfaces provided/required
+    - Source flow references
 ```
 
 ---
 
-## Layer Classification Guide
+## Phase 7: Implementation (AI-Optimized)
 
-### Layer 0: Shared/Infrastructure
-
-| Pattern | Example | Why Layer 0 |
-|---------|---------|-------------|
-| Database schema | `CREATE TABLE users` | Used by all features |
-| Config files | `.env`, `config.ts` | Global settings |
-| Shared types | `interface User` | Multiple features need |
-| Utilities | `formatDate()` | Generic helpers |
-| Base classes | `BaseRepository` | Inherited by domain |
-
-### Layer 1: Domain/Core
-
-| Pattern | Example | Why Layer 1 |
-|---------|---------|-------------|
-| Business logic | `AuthService.login()` | Core functionality |
-| API routes | `POST /api/users` | Domain operations |
-| Repositories | `UserRepository` | Data access |
-| Validators | `validateEmail()` | Business rules |
-| Events | `UserCreatedEvent` | Domain events |
-
-### Layer 2: Feature
-
-| Pattern | Example | Why Layer 2 |
-|---------|---------|-------------|
-| UI components | `LoginForm.tsx` | Feature-specific |
-| Page handlers | `DashboardPage` | Feature entry |
-| Feature tests | `login.e2e.test` | Feature validation |
-| Integration | `connectToPayment()` | Feature-specific |
-
----
-
-## Status Synchronization
-
-**CRITICAL**: Every status change updates TWO places:
+### Context Management
 
 ```
-┌────────────────────┐        ┌────────────────────┐
-│ flows/waterfall/   │  sync  │ flows/[type]-[x]/  │
-│   _status.md       │◄──────►│   _status.md       │
-└────────────────────┘        └────────────────────┘
+When implementing Layer N:
+  1. Load ONLY waterfall/layer-{N}.md (~5KB)
+  2. Load relevant source files from codebase
+  3. Implement tasks
+  4. Update implementation-log in SOURCE flow
+  5. SYNC status
+
+DO NOT load all flows simultaneously!
+Layer doc contains everything needed.
 ```
 
-### Sync Protocol
+### Implementation Loop
 
 ```
-SYNC(flow-name, artifact, status):
-  1. Update flows/[type]-[flow-name]/_status.md
-     - Set artifact status
-     - Update progress checklist
-     - Set current phase if advancing
-
-  2. Update flows/waterfall/_status.md
-     - Update flow tracker
-     - Update phase progress
-     - Update overall statistics
-
-  3. Update flows/waterfall/log.md
-     - Log: "[timestamp] [flow-name] [artifact] → [status]"
+FOR layer in [0, 1, 2]:
+  1. Read waterfall/layer-{N}.md
+  2. FOR each module in layer:
+       FOR each task in module:
+         a. Read task details from layer doc
+         b. Implement
+         c. Update source flow's implementation-log
+         d. SYNC status to waterfall AND flow
+  3. Verify layer complete
+  4. Proceed to next layer
 ```
 
 ---
@@ -362,89 +253,178 @@ SYNC(flow-name, artifact, status):
 
 ```
 flows/waterfall/
-├── _status.md              # Overall BFS progress + per-flow tracker
+├── _status.md              # Overall progress
 ├── dependencies.md         # Flow dependency graph
-├── layers.md               # Task classification by layer
-├── master-plan.md          # Execution order (by layer)
-└── log.md                  # All status changes and actions
+├── layers.md               # Compilation status & index
+├── layer-0.md              # COMPILED: Shared/Infrastructure tasks
+├── layer-1.md              # COMPILED: Domain/Core tasks
+├── layer-2.md              # COMPILED: Feature tasks
+├── master-plan.md          # Execution order
+├── gaps.md                 # Detected gaps (if any)
+└── log.md                  # All actions
+
+Source flows (unchanged):
+flows/sdd-auth/
+flows/sdd-api/
+flows/ddd-dashboard/
+...
 ```
 
 ---
 
-## _status.md Structure
+## Layer Doc Structure (layer-N.md)
 
 ```markdown
-# Waterfall Status
+# Layer N: [Name]
 
-## Mode: BFS
+> COMPILED from flows. Do not edit directly.
+> Last compiled: [timestamp]
+> Source flows: sdd-auth, sdd-api, ddd-dashboard
 
-## Current Phase
+## Overview
 
-REQUIREMENTS | SPECIFICATIONS | PLANS | LAYER_EXTRACTION | MASTER_PLAN | IMPLEMENTATION | COMPLETE
+- Total tasks: X
+- Modules: Y
+- Dependencies on lower layers: Z
 
-## Phase Progress
+## Module: auth
 
-### Documentation (by feature)
+### Provided Interfaces
 
-| Phase | Complete | Total | Status |
-|-------|----------|-------|--------|
-| Requirements | 2 | 4 | IN_PROGRESS |
-| Specifications | 0 | 4 | PENDING |
-| Plans | 0 | 4 | PENDING |
+| Interface | Type | Description | Source |
+|-----------|------|-------------|--------|
+| AuthService | class | Authentication logic | sdd-auth |
+| validateToken | function | JWT validation | sdd-auth |
 
-### Optimization
+### Required Interfaces (from Layer N-1)
 
-| Phase | Status |
-|-------|--------|
-| Layer Extraction | PENDING |
-| Master Plan | PENDING |
+| Interface | Type | Expected From |
+|-----------|------|---------------|
+| db.users | table | layer-0 |
+| config.jwt | object | layer-0 |
 
-### Implementation (by layer)
+### Tasks
 
-| Layer | Complete | Total | Status |
-|-------|----------|-------|--------|
-| L0 Shared | 0 | ? | PENDING |
-| L1 Domain | 0 | ? | PENDING |
-| L2 Feature | 0 | ? | PENDING |
+| # | Task ID | Description | Dependencies | Source Flow |
+|---|---------|-------------|--------------|-------------|
+| 1 | auth-001 | Implement AuthService | db.users | sdd-auth |
+| 2 | auth-002 | Add JWT middleware | auth-001 | sdd-auth |
+| 3 | auth-003 | Add permission check | auth-001, api-roles | sdd-api |
 
-## Overall Progress
+## Module: api
 
-- Phase 1 (REQ): 2/4 complete
-- Phase 2 (SPEC): 0/4 complete
-- Phase 3 (PLAN): 0/4 complete
-- Phase 4 (LAYERS): not started
-- Phase 5 (MASTER): not started
-- Phase 6 (IMPL): not started
+...
 
-## Last Action
+## Cross-Module Dependencies
 
-[timestamp] Approved requirements for sdd-auth
-
-## Next Action
-
-1. Complete requirements for sdd-api
+```
+auth-001 ──> api-003 (provides user context)
+api-002 ──> auth-002 (requires auth middleware)
 ```
 
 ---
 
-## Comparison with DFS (/roadmap)
+*Compiled by /waterfall. Regenerate with `/waterfall compile`*
+```
 
-| Aspect | /waterfall (BFS) | /roadmap (DFS) |
-|--------|------------------|----------------|
-| Goal | Complete everything | Reach specific target |
-| Documentation | All features documented | Only critical path |
-| Implementation | By layer (optimized) | By feature (fast) |
-| When | Full project | MVP or specific goal |
-| Result | Comprehensive + efficient | Minimum viable path |
+---
+
+## Gaps Document (gaps.md)
+
+```markdown
+# Compilation Gaps
+
+## Unresolved
+
+### GAP-001: Missing UserRole type
+
+**Description:** sdd-api references UserRole, but no flow defines it.
+
+**Affected flows:**
+- sdd-api/specifications.md (uses UserRole)
+- sdd-auth/specifications.md (should define?)
+
+**Resolution options:**
+1. Define in sdd-auth (auth owns user types)
+2. Define in new sdd-types flow (shared types)
+3. Define in sdd-api (api owns roles)
+
+**Status:** PENDING
+
+---
+
+### GAP-002: Conflicting User interface
+
+**Description:** User type differs between flows.
+
+**In sdd-auth:**
+```typescript
+interface User { id: string; email: string; }
+```
+
+**In sdd-api:**
+```typescript
+interface User { id: number; email: string; role: string; }
+```
+
+**Resolution:** Align on single definition.
+
+**Status:** PENDING
+
+---
+
+## Resolved
+
+### GAP-003: Missing db.sessions table
+
+**Resolved:** Added to sdd-auth/plan.md task list
+**Date:** [timestamp]
+```
+
+---
+
+## Status Synchronization
+
+**Every status change updates TWO places:**
+
+```
+┌────────────────────┐        ┌────────────────────┐
+│ flows/waterfall/   │  sync  │ flows/[type]-[x]/  │
+│   _status.md       │◄──────►│   _status.md       │
+└────────────────────┘        └────────────────────┘
+```
+
+**Layer docs reference source flows, but source flows are authoritative.**
+
+---
+
+## Comparison: Old vs New
+
+| Aspect | Old (load all) | New (compiled layers) |
+|--------|----------------|----------------------|
+| AI Context | ~120KB (4 flows) | ~5KB (1 layer doc) |
+| Conflicts | Found during impl | Found during compile |
+| Resolution | Ad-hoc fixes | Fix in source, recompile |
+| Traceability | Lost | Every task → source flow |
+
+---
+
+## Commands Reference
+
+```
+/waterfall                # Full BFS execution
+/waterfall status         # Show progress
+/waterfall compile        # Recompile layer docs from flows
+/waterfall gaps           # Show unresolved gaps
+```
 
 ---
 
 ## Always
 
-- Complete current BFS phase for ALL flows before advancing
-- Document by FEATURE, implement by LAYER
-- SYNC status to BOTH waterfall and individual flow
-- Show overview before each major action
-- Ask approval at phase transitions
-- Log everything to log.md
-- Never skip phases
+- Flows are SOURCE OF TRUTH
+- Layer docs are COMPILED/DERIVED
+- Gaps resolved in SOURCE, then recompile
+- Implementation reads LAYER DOC, not all flows
+- SYNC status to BOTH waterfall and source flow
+- Never skip gap resolution

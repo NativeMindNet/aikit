@@ -1,10 +1,20 @@
 # Waterfall Status
 
-## Mode: BFS + Layered Implementation
+## Mode: BFS + Compiled Layer Docs
 
 ## Current Phase
 
-IDLE | REQUIREMENTS | SPECIFICATIONS | PLANS | LAYER_EXTRACTION | MASTER_PLAN | IMPLEMENTATION | COMPLETE
+IDLE | REQUIREMENTS | SPECIFICATIONS | PLANS | COMPILING | RESOLVING_GAPS | MASTER_PLAN | IMPLEMENTATION | COMPLETE
+
+## Architecture
+
+```
+Source of Truth → Compile → Layer Docs → Implement
+     ↑                          │
+     └──── resolve gaps ────────┘
+```
+
+---
 
 ## Phase Progress
 
@@ -16,40 +26,52 @@ IDLE | REQUIREMENTS | SPECIFICATIONS | PLANS | LAYER_EXTRACTION | MASTER_PLAN | 
 | 2. Specifications | 0 | 0 | PENDING |
 | 3. Plans | 0 | 0 | PENDING |
 
-### Optimization
+### Compilation
 
-| Phase | Status |
-|-------|--------|
-| 4. Layer Extraction | PENDING |
-| 5. Master Plan | PENDING |
+| Phase | Status | Details |
+|-------|--------|---------|
+| 4. Compile Layers | PENDING | - |
+| 5. Resolve Gaps | PENDING | 0 gaps |
 
 ### Implementation (by layer)
 
-| Layer | Tasks | Complete | Status |
-|-------|-------|----------|--------|
-| L0 Shared | 0 | 0 | PENDING |
-| L1 Domain | 0 | 0 | PENDING |
-| L2 Feature | 0 | 0 | PENDING |
+| Phase | Status |
+|-------|--------|
+| 6. Master Plan | PENDING |
+| 7. Implementation | PENDING |
 
-## Flows Tracker
+---
 
-### Requirements
+## Compilation Status
 
-| Flow | Type | Status | Last Updated |
-|------|------|--------|--------------|
-| - | - | - | - |
+| Layer | Status | Tasks | Gaps |
+|-------|--------|-------|------|
+| layer-0.md | NOT_COMPILED | 0 | 0 |
+| layer-1.md | NOT_COMPILED | 0 | 0 |
+| layer-2.md | NOT_COMPILED | 0 | 0 |
 
-### Specifications
+**Gaps:** 0 unresolved (see gaps.md)
 
-| Flow | Type | Status | Last Updated |
-|------|------|--------|--------------|
-| - | - | - | - |
+---
 
-### Plans
+## Source Flows
 
-| Flow | Type | Status | Last Updated |
-|------|------|--------|--------------|
-| - | - | - | - |
+| Flow | Type | REQ | SPEC | PLAN | Compiled |
+|------|------|-----|------|------|----------|
+| - | - | - | - | - | - |
+
+---
+
+## Implementation Progress
+
+| Layer | Tasks | Complete | In Progress | Pending |
+|-------|-------|----------|-------------|---------|
+| L0 Shared | 0 | 0 | 0 | 0 |
+| L1 Domain | 0 | 0 | 0 | 0 |
+| L2 Feature | 0 | 0 | 0 | 0 |
+| **Total** | **0** | **0** | **0** | **0** |
+
+---
 
 ## Overall Progress
 
@@ -59,16 +81,16 @@ Documentation:
   Phase 2 (SPEC):   0/0 approved
   Phase 3 (PLAN):   0/0 approved
 
-Optimization:
-  Phase 4 (LAYERS): not started
-  Phase 5 (MASTER): not started
+Compilation:
+  Phase 4 (COMPILE): not started
+  Phase 5 (GAPS):    0 unresolved
 
 Implementation:
-  Phase 6 (IMPL):   0/0 tasks
-    L0 Shared:      0/0
-    L1 Domain:      0/0
-    L2 Feature:     0/0
+  Phase 6 (MASTER):  not started
+  Phase 7 (IMPL):    0/0 tasks
 ```
+
+---
 
 ## Blockers
 
@@ -81,8 +103,7 @@ Implementation:
 ## Next Action
 
 1. Analyze all flows
-2. Build dependency graph
-3. Begin Phase 1 (Requirements)
+2. Begin Phase 1 (Requirements)
 
 ---
 
