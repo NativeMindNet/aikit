@@ -2,6 +2,17 @@
 
 Analyzes existing code and generates documentation (ADR/SDD/DDD/TDD/VDD flows) automatically.
 
+## First Run: Initialize from Templates
+
+**Before any execution**, check if `flows/legacy/` exists:
+
+```
+IF flows/legacy/ does NOT exist:
+  1. Copy flows/.templates/legacy/ → flows/legacy/
+  2. Inform user: "Initialized legacy workspace from templates"
+  3. Continue with execution
+```
+
 ## Command: $ARGUMENTS
 
 ```

@@ -22,7 +22,7 @@ RECURSIVE-UNDERSTAND(node):
     1. ENTER: Push node to stack, set phase = ENTERING
     2. EXPLORE: Read code, form understanding, set phase = EXPLORING
     3. SPAWN: Identify children (deeper concepts), set phase = SPAWNING
-    4. RECURSE: For each child → RECURSIVE-UNDERSTAND(child)
+    4. RECURSE: For each child -> RECURSIVE-UNDERSTAND(child)
     5. SYNTHESIZE: Combine children insights, set phase = SYNTHESIZING
     6. EXIT: Pop from stack, bubble up summary, set phase = EXITING
 ```
@@ -39,7 +39,7 @@ Example when running:
 ```
 / (root)                           DONE
 └── core-domain                    DONE
-    └── authentication             EXPLORING ← current
+    └── authentication             EXPLORING <- current
         └── token-management       PENDING
 ```
 

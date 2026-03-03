@@ -8,7 +8,7 @@
 ## Source
 
 - **Path**: [project root or specific subtree]
-- **Focus**: [none] ← comment triggers DFS mode
+- **Focus**: [none] <- comment triggers DFS mode
 
 ## Traversal State
 

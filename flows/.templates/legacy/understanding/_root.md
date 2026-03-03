@@ -18,7 +18,7 @@
 
 > Which source paths map to which logical domains
 
-| Source Path | → Domain |
+| Source Path | -> Domain |
 |-------------|----------|
 | - | - |
 

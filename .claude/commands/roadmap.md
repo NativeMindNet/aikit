@@ -2,6 +2,17 @@
 
 Orchestrates work across all SDD/DDD/TDD/VDD flows with dependency-aware execution.
 
+## First Run: Initialize from Templates
+
+**Before any execution**, check if `flows/roadmap/` exists:
+
+```
+IF flows/roadmap/ does NOT exist:
+  1. Copy flows/.templates/roadmap/ → flows/roadmap/
+  2. Inform user: "Initialized roadmap workspace from templates"
+  3. Continue with execution
+```
+
 ## Command: $ARGUMENTS
 
 ### No arguments - BFS Mode (breadth-first)
