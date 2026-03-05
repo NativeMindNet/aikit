@@ -1,268 +1,122 @@
-# Document-Driven Development Template
+# AIKit
 
-A comprehensive framework for managing software development through structured documentation. This template supports **SDD**, **DDD**, **TDD**, **VDD** workflows, **ADR** (Architecture Decision Records), and orchestration tools (**roadmap**, **legacy**).
+**Document-Driven Development framework for AI-assisted software development.**
 
-## Overview
+AIKit — это шаблон проекта, который рассматривает документацию как первичный артефакт разработки. Код становится реализацией «последней мили», полученной из хорошо определённых документов.
 
-This template treats documentation as the primary development artifact, where code is the "last-mile" implementation derived from well-defined documents. It provides:
+## Зачем этот шаблон?
 
-- **Resumability**: Continue work across sessions without context loss
-- **Traceability**: Every implementation decision traces back to requirements
-- **Iteration**: Refine documents before committing to code
-- **Parallelization**: Multiple agents can work from the same documents
-- **Stakeholder Communication**: Feature presentations for clients and executives
-- **Decision History**: ADRs capture architectural decisions with full rationale
+Этот шаблон создан для эффективной совместной работы с AI-ассистентами (Claude, Cursor, Qwen, Gemini). Он решает следующие проблемы:
 
-## Auto-loaded Context
+| Проблема | Решение AIKit |
+|----------|---------------|
+| **Потеря контекста между сессиями** | Структурированные документы позволяют возобновить работу без повторного объяснения |
+| **Непонятно, почему принято решение** | ADR (Architecture Decision Records) фиксируют решения с обоснованием |
+| **AI «изобретает» решения заново** | Требования и спецификации уже задокументированы |
+| **Сложно отслеживать прогресс** | Каждая фаза имеет статус и чек-лист |
+| **Разные подходы к разным задачам** | 4 рабочих процесса (SDD/DDD/TDD/VDD) для разных сценариев |
 
-The `CLAUDE.md` file is automatically loaded at session start, providing:
-- ADR Index Summary (all decisions with status and links)
-- Active flows list (SDD/DDD/TDD/VDD in progress)
-- Quick navigation to documentation and commands
+### Ключевые преимущества
 
-## Supported Workflows
+- **Возобновляемость** — продолжение работы между сессиями без потери контекста
+- **Трассируемость** — каждое решение по реализации восходит к требованиям
+- **Итеративность** — уточнение документов перед написанием кода
+- **Параллелизация** — несколько AI-агентов могут работать по одним документам
+- **Коммуникация** — документация для клиентов и руководителей (в DDD)
+- **История решений** — ADR фиксируют архитектурные решения с полным обоснованием
 
-### SDD (Spec-Driven Development)
-Internal features, developer-focused. 4 phases:
-
-```
-REQUIREMENTS → SPECIFICATIONS → PLAN → IMPLEMENTATION
-```
-
-**Use when**: Internal logic, infrastructure, developer tooling.
-
-### DDD (Document-Driven Development)
-Features requiring **stakeholder buy-in**. 5 phases:
+## Структура проекта
 
 ```
-REQUIREMENTS → SPECIFICATIONS → PLAN → IMPLEMENTATION → DOCUMENTATION
+aikit/
+├── README.md                 # Этот файл — общее описание проекта
+├── aikit-en/                 # Английская версия документации
+│   ├── README.md             # Полная документация на английском
+│   ├── CLAUDE.md             # Авто-загружаемый контекст
+│   ├── .claude/commands/     # Команды для Claude Code
+│   ├── .cursor/prompts/      # Команды для Cursor
+│   ├── .qwen/commands/       # Команды для Qwen
+│   └── flows/                # Шаблоны и экземпляры потоков
+├── aikit-ru/                 # Русская версия документации
+│   ├── README.md             # Полная документация на русском
+│   ├── CLAUDE.md             # Авто-загружаемый контекст
+│   ├── .claude/commands/     # Команды для Claude Code
+│   ├── .cursor/prompts/      # Команды для Cursor
+│   ├── .qwen/commands/       # Команды для Qwen
+│   └── flows/                # Шаблоны и экземпляры потоков
+└── 3rdparty/                 # Сторонняя документация
+    ├── adr/                  # ADR система (Architecture Decision Records)
+    ├── sdd/                  # Spec-Driven Development
+    ├── speckit/              # Инструменты спецификаций
+    └── vsdd/                 # Visual-Driven Development
 ```
 
-**Use when**: Client-facing features, need to "sell" the feature, documentation is deliverable.
+### Локализация
 
-**Key difference**: Final phase creates a **mini-presentation** for clients/executives - not technical docs, but value explanation.
+Проект поддерживает два языка:
 
-### TDD (Tests-Driven Development)
-**Cases-first** approach for correctness-critical features. 6 phases:
+| Язык | Папка | Документация |
+|------|-------|--------------|
+| 🇬🇧 English | `aikit-en/` | [`aikit-en/README.md`](./aikit-en/README.md) |
+| 🇷🇺 Русский | `aikit-ru/` | [`aikit-ru/README.md`](./aikit-ru/README.md) |
 
-```
-REQUIREMENTS → TESTS → SPECIFICATIONS → PLAN → IMPLEMENTATION → DOCUMENTATION
-```
+Обе версии содержат одинаковую структуру и функциональность. Выберите папку в соответствии с вашим предпочтительным языком.
 
-**Use when**: Financial calculations, security logic, complex state machines.
+## Рабочие процессы
 
-**Key difference**: TESTS phase is exhaustive behavioral analysis. Design **emerges from cases**, not invented independently. Specs are **derived from tests**.
+| Поток | Когда использовать | Фазы |
+|-------|-------------------|------|
+| **SDD** (Spec-Driven) | Внутренние функции, инфраструктура, инструменты разработчика | Requirements → Specs → Plan → Implementation |
+| **DDD** (Document-Driven) | Функции для клиентов, требуют согласования | Requirements → Specs → Plan → Implementation → Documentation |
+| **TDD** (Tests-Driven) | Финансовые расчёты, логика безопасности, сложные state machines | Requirements → Tests → Specs → Plan → Implementation → Documentation |
+| **VDD** (Visual-Driven) | UI/UX — первичная забота | Requirements → Visual → Specs → Plan → Implementation → Documentation |
 
-### VDD (Visual-Driven Development)
-UI/UX-primary features. 6 phases:
+## Быстрый старт
 
-```
-REQUIREMENTS → VISUAL → SPECIFICATIONS → PLAN → IMPLEMENTATION → DOCUMENTATION
-```
+1. **Выберите папку локализации** (`aikit-en/` или `aikit-ru/`)
+2. **Скопируйте структуру** в ваш проект
+3. **Запустите поток**:
+   ```bash
+   /sdd start [feature-name]    # Внутренняя функция
+   /ddd start [feature-name]    # Функция для клиентов
+   /tdd start [feature-name]    # Критично к корректности
+   /vdd start [feature-name]    # Первичен UI
+   ```
+4. **Пройдите через фазы** с явным подтверждением на каждом этапе
 
-**Use when**: User interfaces, visual design is primary concern.
+## Оркестрация
 
-**Key difference**: VISUAL phase defines UI before technical specs.
+### Roadmap (DFS)
+Глубинный проход — завершает блокирующие зависимости по одной.
 
-## Quick Start
-
-### 1. Choose Your IDE
-This template supports multiple AI-powered IDEs:
-- **Claude Code**: Commands in `.claude/commands/`
-- **Cursor**: Commands in `.cursor/prompts/commands/`
-- **Qwen**: Commands in `.qwen/commands/`
-- **Gemini**: Commands in `.gemini/commands/`
-
-### 2. Start a New Flow
-
-```
-/sdd start [feature-name]    # Internal feature
-/ddd start [feature-name]    # Client-facing feature
-/tdd start [feature-name]    # Correctness-critical
-/vdd start [feature-name]    # UI-primary
-```
-
-### 3. Work Through Phases
-
-Each phase requires explicit approval before advancing:
-- "requirements approved"
-- "tests approved" (TDD) / "visual approved" (VDD)
-- "specs approved"
-- "plan approved"
-- "docs approved" (DDD/TDD/VDD)
-
-## Project Structure
-
-```
-.
-├── CLAUDE.md                     # Auto-loaded context (ADR index, flows list)
-├── flows/
-│   ├── sdd.md                    # SDD flow documentation
-│   ├── ddd.md                    # DDD flow documentation
-│   ├── tdd.md                    # TDD flow documentation
-│   ├── vdd.md                    # VDD flow documentation
-│   ├── adr.md                    # ADR flow documentation
-│   ├── adr-index.md              # Master index of all ADRs
-│   ├── .templates/               # Templates for new flows
-│   │   ├── sdd/
-│   │   ├── ddd/
-│   │   ├── tdd/
-│   │   ├── vdd/
-│   │   └── adr/
-│   ├── sdd-[feature]/            # SDD flow instances
-│   ├── ddd-[feature]/            # DDD flow instances
-│   ├── tdd-[feature]/            # TDD flow instances
-│   ├── vdd-[feature]/            # VDD flow instances
-│   ├── adr-[NNN]-[name]/         # ADR instances (numbered)
-│   ├── roadmap/                  # Flow orchestration
-│   │   ├── _status.md
-│   │   ├── dependencies.md
-│   │   ├── plan.md
-│   │   └── log.md
-│   └── legacy/                   # Reverse engineering
-│       ├── _status.md
-│       ├── log.md
-│       ├── analysis/
-│       ├── mapping.md
-│       └── review.md
-│
-├── .claude/commands/             # Claude Code commands
-├── .cursor/prompts/commands/     # Cursor commands
-├── .qwen/commands/               # Qwen commands
-└── .gemini/commands/             # Gemini commands
+```bash
+/roadmap         # DFS к MVP
+/roadmap [goal]  # DFS к конкретной цели
 ```
 
-## Available Commands
+### Waterfall (BFS)
+Шириный проход — документирует всё, затем компилирует в слои.
 
-### Core Workflows
+```bash
+/waterfall        # BFS: Документировать все, затем реализовать
+/waterfall compile  # Компилировать layers из approved plans
+```
 
-| Command | Description |
-|---------|-------------|
-| `/sdd start [name]` | Start new SDD flow (internal feature) |
-| `/ddd start [name]` | Start new DDD flow (client-facing) |
-| `/tdd start [name]` | Start new TDD flow (correctness-critical) |
-| `/vdd start [name]` | Start new VDD flow (UI-primary) |
-| `/[flow] resume [name]` | Resume existing flow |
-| `/[flow] status` | Show all active flows of type |
+## Поддерживаемые IDE
 
-### Architecture Decision Records
+| IDE | Папка команд |
+|-----|--------------|
+| Claude Code | `.claude/commands/` |
+| Cursor | `.cursor/prompts/commands/` |
+| Qwen | `.qwen/commands/` |
+| Gemini | `.gemini/commands/` |
 
-| Command | Description |
-|---------|-------------|
-| `/adr start [name]` | Start new ADR in DRAFT phase |
-| `/adr resume [n]` | Resume existing ADR |
-| `/adr quick [name]` | Create lightweight ADR |
-| `/adr list` | Show all ADRs with status |
-| `/adr.guide` | Reference: language patterns, scaling, migration |
+## Дополнительные ресурсы
 
-**ADR Types**:
-- `constraining` - selects from options, narrows scope
-- `enabling` - adds capabilities, expands scope
-
-**Flow**: `DRAFT → REVIEW → APPROVED | REJECTED`
-
-### Roadmap - Flow Orchestration
-
-| Command | Description |
-|---------|-------------|
-| `/roadmap` | BFS: Document all flows, then implement |
-| `/roadmap [flow]` | DFS: Complete specific flow + blockers |
-| `/roadmap status` | Show current state |
-
-**BFS Mode** (no args):
-- Documents all flows to PLAN approved
-- Builds master implementation plan
-- Executes by consolidated plan
-
-**DFS Mode** (with flow):
-- Finds blocking dependencies recursively
-- Completes blockers depth-first
-- Completes target flow
-
-### Legacy - Reverse Engineering
-
-| Command | Description |
-|---------|-------------|
-| `/legacy` | Analyze entire project, generate docs |
-| `/legacy [path]` | Analyze specific path |
-| `/legacy [path] "focus"` | DFS: Focus on specific functionality |
-
-**Module-first detection** - flows per module, not per file type.
-
-**Auto-detects flow type by purpose**:
-- SDD ← internal logic, no stakeholder communication needed
-- DDD ← requires client/executive explanation
-- TDD ← correctness-critical, tests define behavior
-- VDD ← UI/UX is primary concern
-
-**Idempotent**: Appends to existing flows, no duplicates.
-
-All generated flows are DRAFT status, require review.
-
-## Choosing the Right Flow
-
-| Situation | Flow |
-|-----------|------|
-| Internal refactoring | SDD |
-| Developer tooling | SDD |
-| Infrastructure | SDD |
-| Client-facing feature | DDD |
-| Feature needs "selling" to stakeholders | DDD |
-| Documentation is deliverable | DDD |
-| Financial/security calculations | TDD |
-| Complex state machines | TDD |
-| Behavior must be exhaustively defined | TDD |
-| UI/UX is the primary concern | VDD |
-| Visual design drives development | VDD |
-
-## Phase Transitions
-
-Each phase requires explicit user approval:
-
-| Transition | Approval phrase |
-|------------|-----------------|
-| Requirements → next | "requirements approved" |
-| Tests → Specs (TDD) | "tests approved" |
-| Visual → Specs (VDD) | "visual approved" |
-| Specs → Plan | "specs approved" |
-| Plan → Implementation | "plan approved" |
-| Implementation → Docs | "ready for docs" |
-| Docs → Complete | "docs approved" |
-
-## Status Tracking
-
-Each flow maintains `_status.md`:
-- Current phase and status
-- Progress checklist
-- Blockers
-- Context notes for resuming
-- Next actions
-
-## Best Practices
-
-### Do
-- Update `_status.md` after significant changes
-- Wait for explicit approval before phase transitions
-- Use TDD for correctness-critical logic
-- Use DDD when stakeholder buy-in needed
-- Think module-first, not file-type-first
-
-### Don't
-- Skip phases
-- Create separate flows for tests/UI of a module
-- Assume approval without confirmation
-- Use technical jargon in DDD documentation phase
-- Run /legacy without reviewing results
-
-## Session Handoff
-
-When ending mid-flow:
-1. Update `_status.md` with current state
-2. Document in-flight reasoning
-3. List explicit next steps
-
-New sessions read `_status.md` first to reconstruct context.
+- **ADR Guide**: [`3rdparty/adr/adr.md`](./3rdparty/adr/adr.md) — полное руководство по Architecture Decision Records
+- **English Documentation**: [`aikit-en/README.md`](./aikit-en/README.md)
+- **Russian Documentation**: [`aikit-ru/README.md`](./aikit-ru/README.md)
 
 ---
 
-**Note**: This template is designed for AI-assisted development. The structured approach enables AI agents to maintain context across sessions and deliver traceable implementations.
+**AIKit** — Документация как первичный артефакт. Код как реализация последней мили.
