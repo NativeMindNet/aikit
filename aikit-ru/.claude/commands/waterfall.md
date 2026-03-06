@@ -21,6 +21,8 @@ IF flows/waterfall/ does NOT exist:
 /waterfall compile            # Recompile layer docs from flows
 ```
 
+**Режим выполнения:** Фазы документирования (1-5) выполняются в основной сессии. **Фаза реализации (7) запускается в субагенте**, читая скомпилированные layer docs для контекстно-эффективного выполнения.
+
 ---
 
 ## Core Architecture: Source of Truth + Derived Docs

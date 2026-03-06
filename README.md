@@ -97,6 +97,12 @@ Depth-first — completes blocking dependencies one at a time.
 /roadmap [goal]  # DFS to specific goal
 ```
 
+**How it works:**
+- Finds blocking dependencies recursively
+- Launches flow commands (`/sdd`, `/ddd`, `/vdd`, `/tdd`) **in a subagent**
+- Injects relevant ADR context into each subagent session
+- Completes each flow fully before moving to the next
+
 ### Waterfall (BFS)
 Breadth-first — documents everything, then compiles into layers.
 
@@ -104,6 +110,12 @@ Breadth-first — documents everything, then compiles into layers.
 /waterfall        # BFS: Document all, then implement
 /waterfall compile  # Compile layers from approved plans
 ```
+
+**How it works:**
+- Documents all flows to PLAN approved phase
+- Compiles approved plans into architectural layers (0/1/2)
+- Detects and resolves gaps in source flows
+- Launches implementation **in a subagent** for bottom-up execution (Layer 0 → Layer 1 → Layer 2)
 
 ## Supported IDEs
 
